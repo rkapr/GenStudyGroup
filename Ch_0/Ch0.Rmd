@@ -1,6 +1,6 @@
 ---
-title: "Ch0"
-author: "Rajan Kapoor"
+title: "Chapter 0"
+author: "RK"
 date: "7/26/2018"
 output:
   html_document:
@@ -9,28 +9,77 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
 ```
+Code for this page was tested in R version `r getRversion()` with following packages:
 
-## Basic Intallation and setup
+```{r, echo=FALSE}
+# Run this at the end
+sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
+
+```
+### Getting Started
+
+#### Basic Intallation and setup
 
 ```{r packages, eval=FALSE, include=FALSE}
-install.packages("downloader")
+#install.packages("downloader")
 ```
 
 ```{r datadnld}
-library(downloader) ##use install.packages to install
-dir <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/"
+library(downloader) 
+url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleMiceWeights.csv"
 filename <- "femaleMiceWeights.csv" 
-url <- paste0(dir, filename)
-if (!file.exists(filename)) download(url, destfile=filename)
+download(url, destfile=filename)
+```
+#### Problem 1
+
+Read in the file femaleMiceWeights.csv and report the body weight of the mouse in the exact name of the column containing the weights.
+```{r}
+dat <- read.csv(filename)
 ```
 
-## Including Plots
+#### Problem 2
+The [ and ] symbols can be used to extract specific rows and specific columns of the table. What is the entry in the 12th row and second column?
+```{r Ch0ex2}
+# What is the data type of dat
+typeof(dat)
+#df <- as.data.frame(dat)
+dat[12,2]
+```
+#### Problem 3
+You should have learned how to use the \$ character to extract a column from a table and return it as a vector. Use \$ to extract the weight column and report the weight of the mouse in the 11th row.
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r Ch0ex3}
+print(names(dat))
+dat$Bodyweight[11]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+#### Problem 4
+The length function returns the number of elements in a vector. How many mice are included in our dataset?
+
+```{r}
+length(dat[,1])
+```
+
+
+#### Problem 5
+
+To create a vector with the numbers 3 to 7, we can use seq(3,7) or, because they are consecutive, 3:7. View the data and determine what rows are associated with the high fat or hf diet. Then use the mean function to compute the average weight of these mice.
+
+```{r}
+mean(dat[13:24,2])
+```
+
+#### Problem 6
+
+One of the functions we will be using often is sample. Read the help file for sample using ?sample. Now take a random sample of size 1 from the numbers 13 to 24 and report back the weight of the mouse represented by that row. Make sure to type set.seed(1) to ensure that everybody gets the same answer.
+
+```{r}
+set.seed(1)
+sample(x = dat[13:24,2], size=1)
+```
+```{r echo=FALSE}
+rm(list = ls())
+```
+
