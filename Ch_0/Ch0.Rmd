@@ -11,12 +11,11 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 rm(list = ls())
 ```
-Code for this page was tested in R version `r getRversion()` with following packages:
+Code for this page was tested in R version `r getRversion()`. Check Markdown file for list of all packages.
 
-```{r, echo=FALSE}
+```{r echo=FALSE}
 # Run this at the end
-sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
-
+print.data.frame(data.frame(sessioninfo::package_info(pkgs = NULL, include_base = FALSE))[,c(1,3)])
 ```
 ### Getting Started
 
