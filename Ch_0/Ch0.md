@@ -5,7 +5,7 @@ date: "7/26/2018"
 output:
   html_document:
     keep_md: yes
-    theme: flatly
+    theme: united
     toc: yes
 ---
 
