@@ -342,15 +342,14 @@ download(url, destfile=filename)</code></pre>
 <div id="problem-1" class="section level4">
 <h4>Problem 1</h4>
 <p>Read in the file femaleMiceWeights.csv and report the body weight of the mouse in the exact name of the column containing the weights.</p>
-<pre class="r"><code>dat &lt;- read.csv(filename)</code></pre>
+<pre class="r"><code>dat &lt;- read.csv(&quot;femaleMiceWeights.csv&quot;)</code></pre>
 </div>
 <div id="problem-2" class="section level4">
 <h4>Problem 2</h4>
 <p>The [ and ] symbols can be used to extract specific rows and specific columns of the table. What is the entry in the 12th row and second column?</p>
 <pre class="r"><code># What is the data type of dat
-typeof(dat)</code></pre>
-<pre><code>## [1] &quot;list&quot;</code></pre>
-<pre class="r"><code>#df &lt;- as.data.frame(dat)
+#typeof(dat)
+#class(dat)
 dat[12,2]</code></pre>
 <pre><code>## [1] 26.25</code></pre>
 </div>
@@ -380,6 +379,80 @@ dat[12,2]</code></pre>
 <pre class="r"><code>set.seed(1)
 sample(x = dat[13:24,2], size=1)</code></pre>
 <pre><code>## [1] 25.34</code></pre>
+</div>
+</div>
+<div id="dplyr-exercises" class="section level3">
+<h3>dplyr Exercises</h3>
+<div id="basic-intallation-and-setup-1" class="section level4">
+<h4>Basic Intallation and setup</h4>
+<pre class="r"><code>??msleep</code></pre>
+<pre class="r"><code>library(downloader) 
+url &lt;- &quot;https://raw.githubusercontent.com/tidyverse/ggplot2/master/data-raw/msleep.csv&quot;
+filename &lt;- &quot;msleep.csv&quot;
+download(url, destfile=filename)</code></pre>
+</div>
+<div id="problem-1-1" class="section level4">
+<h4>Problem 1</h4>
+<p>Read in the msleep_ggplot2.csv file with the function read.csv and use the function class to determine what type of object is returned.</p>
+<pre class="r"><code>dat &lt;- read.csv(&quot;msleep.csv&quot;)
+class(dat)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>typeof(dat)</code></pre>
+<pre><code>## [1] &quot;list&quot;</code></pre>
+</div>
+<div id="problem-2-1" class="section level4">
+<h4>Problem 2</h4>
+<p>Now use the filter function to select only the primates. How many animals in the table are primates? Hint: the nrow function gives you the number of rows of a data frame or matrix.</p>
+<pre class="r"><code>library(dplyr) </code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>filter(dat, order==&quot;Primates&quot;) %&gt;% nrow</code></pre>
+<pre><code>## [1] 12</code></pre>
+</div>
+<div id="problem-3-1" class="section level4">
+<h4>Problem 3</h4>
+<p>What is the class of the object you obtain after subsetting the table to only include primates?</p>
+<pre class="r"><code>class(filter(dat, order==&quot;Primates&quot;))</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+</div>
+<div id="problem-4-1" class="section level4">
+<h4>Problem 4</h4>
+<p>Now use the select function to extract the sleep (total) for the primates. What class is this object? Hint: use %&gt;% to pipe the results of the filter function to select.</p>
+<pre class="r"><code>primates_sleep &lt;- filter(dat, order==&quot;Primates&quot;) %&gt;% select(sleep_total)
+head(primates_sleep)</code></pre>
+<pre><code>##   sleep_total
+## 1        17.0
+## 2        10.0
+## 3        10.9
+## 4         9.8
+## 5         8.0
+## 6         9.5</code></pre>
+<pre class="r"><code>class(primates_sleep)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+</div>
+<div id="problem-5-1" class="section level4">
+<h4>Problem 5</h4>
+<p>Now we want to calculate the average amount of sleep for primates (the average of the numbers computed above). One challenge is that the mean function requires a vector so, if we simply apply it to the output above, we get an error. Look at the help file for unlist and use it to compute the desired average.</p>
+<pre class="r"><code>mean(primates_sleep)</code></pre>
+<pre><code>## Warning in mean.default(primates_sleep): argument is not numeric or
+## logical: returning NA</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>mean(unlist(primates_sleep))</code></pre>
+<pre><code>## [1] 10.5</code></pre>
+</div>
+<div id="problem-6-1" class="section level4">
+<h4>Problem 6</h4>
+<p>For the last exercise, we could also use the dplyr summarize function. We have not introduced this function, but you can read the help file and repeat exercise 5, this time using just filter and summarize to get the answer.</p>
+<pre class="r"><code>#?summarize
+filter(dat, order==&quot;Primates&quot;) %&gt;% summarise(mean = mean(sleep_total))</code></pre>
+<pre><code>##   mean
+## 1 10.5</code></pre>
 </div>
 </div>
 
