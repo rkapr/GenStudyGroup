@@ -4,18 +4,18 @@ author: "RK"
 date: "7/26/2018"
 output:
   html_document:
-    keep_md: TRUE
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 rm(list = ls())
 ```
-Code for this page was tested in R version `r getRversion()`. Check Markdown file for list of all packages.
+Code for this page was tested in R version `r getRversion()`. Check RMarkdown file for list of all packages.
 
 ```{r echo=FALSE}
 # Run this at the end
-print.data.frame(data.frame(sessioninfo::package_info(pkgs = NULL, include_base = FALSE))[,c(1,3)])
+sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
 ```
 ### Getting Started
 
