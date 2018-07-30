@@ -1,5 +1,5 @@
 ---
-title: "Chapter 1"
+title: "Chapter 1 Inference"
 author: "RK"
 date: "7/29/2018"
 output:
@@ -268,3 +268,21 @@ D) The sample size was smaller for females.
 ### Permutation tests exercises
 
 ### Association tests exercises
+
+#### Basic Intallation and setup
+
+```r
+library(downloader) 
+url <- "https://studio.edx.org/c4x/HarvardX/PH525.1x/asset/assoctest.csv"
+filename <- basename(url)
+download(url, destfile=filename)
+dat <- read.csv(filename)
+```
+#### Problem 1
+This dataframe reflects the allele status (either AA/Aa or aa) and the case/control status for 72 individuals. Compute the Chi-square test for the association of genotype with case/control status (using the table function and the chisq.test function). Examine the table to see if there appears to be an association. What is the X-squared statistic?
+
+
+#### Problem 2
+Compute Fisher’s exact test fisher.test for the same table. What is the p-value?
+
+
