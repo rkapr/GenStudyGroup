@@ -138,7 +138,7 @@ sum(23<=result50 & result50<=25)/N*100
 #### Problem 10
 Now ask the same question of a normal distribution with average 23.9 and standard deviation 0.43.
 ```{r}
-result_norm <-rnorm(N, mean = 23.9, sd = 0.43)
+result_norm <- rnorm(N, mean = 23.9, sd = 0.43)
 sum(23<=result_norm & result_norm<=25)/N*100
 ```
 
@@ -194,3 +194,15 @@ A) The population variance of the females is smaller than that of the males; thu
 B) Statistical estimates are more precise for females.
 C) The sample size was larger for females.
 D) The sample size was smaller for females.
+
+### CLT and t-distribution exercises
+
+### CLT in practice exercises
+
+### Power calculations exercises
+
+### Monte carlo exercises
+
+### Permutation tests exercises
+
+### Association tests exercises
