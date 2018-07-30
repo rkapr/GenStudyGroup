@@ -534,10 +534,49 @@ dat &lt;- read.csv(filename)</code></pre>
 </div>
 <div id="permutation-tests-exercises" class="section level3">
 <h3>Permutation tests exercises</h3>
+<div id="basic-intallation-and-setup-2" class="section level4">
+<h4>Basic Intallation and setup</h4>
+<pre class="r"><code>url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt&quot;
+filename &lt;- basename(url)
+download(url, destfile=filename)
+babies &lt;- read.table(&quot;babies.txt&quot;, header=TRUE)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
+bwt.smoke &lt;- filter(babies, smoke==1) %&gt;% select(bwt) %&gt;% unlist</code></pre>
+</div>
+<div id="problem-1-2" class="section level4">
+<h4>Problem 1</h4>
+<p>We will generate the following random variable based on a sample size of 10 and observe the following difference:</p>
+<pre class="r"><code>N=10
+set.seed(1)
+nonsmokers &lt;- sample(bwt.nonsmoke , N)
+smokers &lt;- sample(bwt.smoke , N)
+obs &lt;- mean(smokers) - mean(nonsmokers)</code></pre>
+<p>The question is whether this observed difference is statistically significant. We do not want to rely on the assumptions needed for the normal or t-distribution approximations to hold, so instead we will use permutations. We will reshuffle the data and recompute the mean. We can create one permuted sample with the following code:</p>
+<pre class="r"><code>dat &lt;- c(smokers,nonsmokers)
+shuffle &lt;- sample( dat )
+smokersstar &lt;- shuffle[1:N]
+nonsmokersstar &lt;- shuffle[(N+1):(2*N)]
+mean(smokersstar)-mean(nonsmokersstar)</code></pre>
+<pre><code>## [1] -8.5</code></pre>
+<p>The last value is one observation from the null distribution we will construct. Set the seed at 1, and then repeat the permutation 1,000 times to create a null distribution. What is the permutation derived p-value for our observation?</p>
+</div>
+<div id="problem-2-2" class="section level4">
+<h4>Problem 2</h4>
+<p>Repeat the above exercise, but instead of the differences in mean, consider the differences in <code>median obs &lt;- median(smokers) - median(nonsmokers)</code>. What is the permutation based p-value?</p>
+</div>
 </div>
 <div id="association-tests-exercises" class="section level3">
 <h3>Association tests exercises</h3>
-<div id="basic-intallation-and-setup-2" class="section level4">
+<div id="basic-intallation-and-setup-3" class="section level4">
 <h4>Basic Intallation and setup</h4>
 <pre class="r"><code>library(downloader) 
 url &lt;- &quot;https://studio.edx.org/c4x/HarvardX/PH525.1x/asset/assoctest.csv&quot;
@@ -545,11 +584,11 @@ filename &lt;- basename(url)
 download(url, destfile=filename)
 dat &lt;- read.csv(filename)</code></pre>
 </div>
-<div id="problem-1-2" class="section level4">
+<div id="problem-1-3" class="section level4">
 <h4>Problem 1</h4>
 <p>This dataframe reflects the allele status (either AA/Aa or aa) and the case/control status for 72 individuals. Compute the Chi-square test for the association of genotype with case/control status (using the table function and the chisq.test function). Examine the table to see if there appears to be an association. What is the X-squared statistic?</p>
 </div>
-<div id="problem-2-2" class="section level4">
+<div id="problem-2-3" class="section level4">
 <h4>Problem 2</h4>
 <p>Compute Fisher’s exact test fisher.test for the same table. What is the p-value?</p>
 </div>
