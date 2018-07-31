@@ -541,13 +541,17 @@ We can see that, as predicted by the CLT, the distribution of the random variabl
 ```r
 #y <- filter(dat, Sex=="M" & Diet=="chow") %>% select(Bodyweight) %>% unlist
 avgs <- replicate( 10000, mean(sample(y, 25)) )
-mypar(1,2)
+par(mfrow=c(1,2))
 hist(avgs)
 qqnorm(avgs)
 qqline(avgs)
 ```
 
 ![](Ch1_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+
+```r
+par(mfrow=c(1,1))
+```
 
 What is the average of the distribution of the sample average?
 
@@ -630,7 +634,7 @@ In practice we do not know σ (popsd(y)) which is why we can’t use the CLT dir
 ```r
 set.seed(1)
 sds <- replicate( 10000, sd(sample(y, 25)) )
-mypar(1,2)
+par(mfrow=c(1,2))
 hist(sds)
 qqnorm(sds)
 qqline(sds)
@@ -647,7 +651,7 @@ mean(sds<3.5)*100
 ```
 
 ```r
-mypar(1,1)
+par(mfrow=c(1,1))
 ```
 
 
