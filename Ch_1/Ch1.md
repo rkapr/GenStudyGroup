@@ -411,21 +411,70 @@ dat <- na.omit( read.csv(filename) )
 #### Problem 1
 If a list of numbers has a distribution that is well approximated by the normal distribution, what proportion of these numbers are within one standard deviation away from the list’s average?
 
+```r
+pnorm(1,0,1)-pnorm(-1,0,1)
+```
+
+```
+## [1] 0.6826895
+```
 
 #### Problem 2
 What proportion of these numbers are within two standard deviations away from the list’s average?
 
+```r
+pnorm(2,0,1)-pnorm(-2,0,1)
+```
+
+```
+## [1] 0.9544997
+```
+
 #### Problem 3
 What proportion of these numbers are within three standard deviations away from the list’s average?
 
+```r
+pnorm(3,0,1)-pnorm(-3,0,1)
+```
+
+```
+## [1] 0.9973002
+```
 #### Problem 4
 Define y to be the weights of males on the control diet. What proportion of the mice are within one standard deviation away from the average weight (remember to use popsd for the population sd)?
+
+```r
+y <- filter(dat, Diet=="chow" & Sex=="M") %>% select(Bodyweight) %>% unlist
+pop_mean_control <- mean(y)
+pop_sd_control <- rafalib::popsd(y)
+mean(pop_mean_control-pop_sd_control<=y & y<=pop_mean_control+pop_sd_control)*100
+```
+
+```
+## [1] 69.50673
+```
 
 #### Problem 5
 What proportion of these numbers are within two standard deviations away from the list’s average?
 
+```r
+mean(pop_mean_control-2*pop_sd_control<=y & y<=pop_mean_control+2*pop_sd_control)*100
+```
+
+```
+## [1] 94.61883
+```
+
 #### Problem 6
 What proportion of these numbers are within three standard deviations away from the list’s average?
+
+```r
+mean(pop_mean_control-3*pop_sd_control<=y & y<=pop_mean_control+3*pop_sd_control)*100
+```
+
+```
+## [1] 99.10314
+```
 
 #### Problem 7
 Note that the numbers for the normal distribution and our weights are relatively close. Also, notice that we are indirectly comparing quantiles of the normal distribution to quantiles of the mouse weight distribution. We can actually compare all quantiles using a qqplot. Which of the following best describes the qq-plot comparing mouse weights to the normal distribution?
@@ -435,6 +484,11 @@ B) The average of the mouse weights is not 0 and thus it can’t follow a normal
 C) The mouse weights are well approximated by the normal distribution, although the larger values (right tail) are larger than predicted by the normal. This is consistent with the differences seen between question 3 and 6.
 D) These are not random variables and thus they can’t follow a normal distribution.
 
+
+```
+## [1] "C. The mouse weights are well approximated by the normal distribution, although the larger values (right tail) are larger than predicted by the normal. This is consistent with the differences seen between question 3 and 6."
+```
+
 #### Problem 8
 Create the above qq-plot for the four populations: male/females on each of the two diets. What is the most likely explanation for the mouse weights being well approximated? What is the best explanation for all these being well approximated by the normal distribution?
 
@@ -443,6 +497,40 @@ B) This just happens to be how nature behaves. Perhaps the result of many biolog
 C) Everything measured in nature follows a normal distribution.
 D) Measurement error is normally distributed.
 
+```r
+y_chowM <- filter(dat, Diet=="chow" & Sex=="M") %>% select(Bodyweight) %>% unlist
+y_chowF <- filter(dat, Diet=="chow" & Sex=="F") %>% select(Bodyweight) %>% unlist
+y_hfM <- filter(dat, Diet=="hf" & Sex=="M") %>% select(Bodyweight) %>% unlist
+y_hfF <- filter(dat, Diet=="hf" & Sex=="F") %>% select(Bodyweight) %>% unlist
+par(mfrow=c(1,2),oma=c(0,0,2,0))
+qqnorm(y_chowM, main="Males")
+qqline(y_chowM)
+qqnorm(y_chowF, main="Females")
+qqline(y_chowF)
+title("Normal Q-Q Plots for Diet:Chow",outer=TRUE)
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+
+```r
+qqnorm(y_hfM, main="Males")
+qqline(y_hfM)
+qqnorm(y_hfF, main="Females")
+qqline(y_hfF)
+title("Normal Q-Q Plots for Diet:hf",outer=TRUE)
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-35-2.png)<!-- -->
+
+```r
+# reset graph settings to normal
+par(mfrow=c(1,1))
+```
+
+
+```
+## [1] "B. This just happens to be how nature behaves. Perhaps the result of many biological factors averaging out."
+```
 #### Problem 9
 Here we are going to use the function replicate to learn about the distribution of random variables. All the above exercises relate to the normal distribution as an approximation of the distribution of a fixed list of numbers or a population. We have not yet discussed probability in these exercises. If the distribution of a list of numbers is approximately normal, then if we pick a number at random from this distribution, it will follow a normal distribution. However, it is important to remember that stating that some quantity has a distribution does not necessarily imply this quantity is random. Also, keep in mind that this is not related to the central limit theorem. The central limit applies to averages of random variables. Let’s explore this concept.
 
@@ -450,11 +538,38 @@ We will now take a sample of size 25 from the population of males on the chow di
 
 We can see that, as predicted by the CLT, the distribution of the random variable is very well approximated by the normal distribution.
 
+```r
+#y <- filter(dat, Sex=="M" & Diet=="chow") %>% select(Bodyweight) %>% unlist
+avgs <- replicate( 10000, mean(sample(y, 25)) )
+mypar(1,2)
+hist(avgs)
+qqnorm(avgs)
+qqline(avgs)
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
 
 What is the average of the distribution of the sample average?
 
+```r
+mean(avgs)
+```
+
+```
+## [1] 30.9556
+```
+
 #### Problem 10
 What is the standard deviation of the distribution of sample averages?
+
+```r
+sd(avgs)
+```
+
+```
+## [1] 0.8368371
+```
+
 
 #### Problem 11
 According to the CLT, the answer to exercise 9 should be the same as mean(y). You should be able to confirm that these two numbers are very close. Which of the following does the CLT tell us should be close to your answer to exercise 10?
@@ -464,8 +579,77 @@ B) popsd(avgs)/sqrt(25)
 C) sqrt(25) / popsd(y)
 D) popsd(y)/sqrt(25)
 
+```r
+mean(y)
+```
+
+```
+## [1] 30.96381
+```
+
+```r
+library(rafalib)
+popsd(y)
+```
+
+```
+## [1] 4.420501
+```
+
+```r
+popsd(avgs)/sqrt(25)
+```
+
+```
+## [1] 0.167359
+```
+
+```r
+sqrt(25) / popsd(y)
+```
+
+```
+## [1] 1.131094
+```
+
+```r
+popsd(y)/sqrt(25)
+```
+
+```
+## [1] 0.8841001
+```
+
+
+CLT: if we take many samples of size N, then the quantity: $\dfrac{\bar{Y}−\mu}{\sigma_{Y}/N}$ is approximated with a normal distribution centered at 0 and with standard deviation 1. OR $\bar{Y}$ is normally distributed with mean $\mu$ and sd ${\sigma_{Y}/N}$ where $\sigma_{Y}$ is population sd. So, `D. popsd(y)/sqrt(25)`
+
+
 #### Problem 12
 In practice we do not know σ (popsd(y)) which is why we can’t use the CLT directly. This is because we see a sample and not the entire distribution. We also can’t use popsd(avgs) because to construct averages, we have to take 10,000 samples and this is never practical. We usually just get one sample. Instead we have to estimate popsd(y). As described, what we use is the sample standard deviation. Set the seed at 1, using the replicate function, create 10,000 samples of 25 and now, instead of the sample average, keep the standard deviation. Look at the distribution of the sample standard deviations. It is a random variable. The real population SD is about 4.5. What proportion of the sample SDs are below 3.5?
+
+```r
+set.seed(1)
+sds <- replicate( 10000, sd(sample(y, 25)) )
+mypar(1,2)
+hist(sds)
+qqnorm(sds)
+qqline(sds)
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+
+```r
+mean(sds<3.5)*100
+```
+
+```
+## [1] 9.64
+```
+
+```r
+mypar(1,1)
+```
+
 
 #### Problem 13
 What the answer to question 12 reveals is that the denominator of the t-test is a random variable. By decreasing the sample size, you can see how this variability can increase. It therefore adds variability. The smaller the sample size, the more variability is added. The normal distribution stops providing a useful approximation. When the distribution of the population values is approximately normal, as it is for the weights, the t-distribution provides a better approximation. We will see this later on. Here we will look at the difference between the t-distribution and normal. Use the function qt and qnorm to get the quantiles of x=seq(0.0001,0.9999,len=300). Do this for degrees of freedom 3, 10, 30, and 100. Which of the following is true?
@@ -474,6 +658,86 @@ A) The t-distribution and normal distribution are always the same.
 B) The t-distribution has a higher average than the normal distribution.
 C) The t-distribution has larger tails up until 30 degrees of freedom, at which point it is practically the same as the normal distribution.
 D) The variance of the t-distribution grows as the degrees of freedom grow.
+
+```r
+x <- seq(0.0001,0.9999,len=300)
+t3 <- qt(x, df = 3) 
+t10 <- qt(x, df = 10) 
+t30 <- qt(x, df = 30) 
+t100 <- qt(x, df = 100)
+norm_dis <- qnorm(x)
+print("t-distribution is normal with fatter tails so means should remain same.")
+```
+
+```
+## [1] "t-distribution is normal with fatter tails so means should remain same."
+```
+
+```r
+round(mean(t3),4)
+```
+
+```
+## [1] 0
+```
+
+```r
+round(mean(t10),4)
+```
+
+```
+## [1] 0
+```
+
+```r
+round(mean(t30),4)
+```
+
+```
+## [1] 0
+```
+
+```r
+round(mean(t100),4)
+```
+
+```
+## [1] 0
+```
+
+```r
+round(mean(norm_dis),4)
+```
+
+```
+## [1] 0
+```
+
+```r
+par(mfrow=c(2,2),oma=c(0,0,2,0))
+plot(norm_dis,t3, main="df=3",xlab="Normal quantiles",ylab="t-dis quantiles")
+qqline(t3)
+plot(norm_dis,t10, main="df=10",xlab="Normal quantiles",ylab="t-dis quantiles")
+qqline(t10)
+plot(norm_dis,t30, main="df=30",xlab="Normal quantiles",ylab="t-dis quantiles")
+qqline(t30)
+plot(norm_dis,t100, main="df=100",xlab="Normal quantiles",ylab="t-dis quantiles")
+qqline(t100)
+title("QQ plots: Normal vs t distribution",outer=TRUE)
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+
+```r
+# reset graph settings to normal
+par(mfrow=c(1,1))
+```
+
+
+```
+## [1] "C. The t-distribution has larger tails up until 30 degrees of freedom, at which point it is practically the same as the normal distribution."
+```
+
 
 ### CLT in practice exercises
 
