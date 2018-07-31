@@ -447,33 +447,33 @@ Define y to be the weights of males on the control diet. What proportion of the 
 y <- filter(dat, Diet=="chow" & Sex=="M") %>% select(Bodyweight) %>% unlist
 pop_mean_control <- mean(y)
 pop_sd_control <- rafalib::popsd(y)
-mean(pop_mean_control-pop_sd_control<=y & y<=pop_mean_control+pop_sd_control)*100
+mean(pop_mean_control-pop_sd_control<=y & y<=pop_mean_control+pop_sd_control)
 ```
 
 ```
-## [1] 69.50673
+## [1] 0.6950673
 ```
 
 #### Problem 5
 What proportion of these numbers are within two standard deviations away from the list’s average?
 
 ```r
-mean(pop_mean_control-2*pop_sd_control<=y & y<=pop_mean_control+2*pop_sd_control)*100
+mean(pop_mean_control-2*pop_sd_control<=y & y<=pop_mean_control+2*pop_sd_control)
 ```
 
 ```
-## [1] 94.61883
+## [1] 0.9461883
 ```
 
 #### Problem 6
 What proportion of these numbers are within three standard deviations away from the list’s average?
 
 ```r
-mean(pop_mean_control-3*pop_sd_control<=y & y<=pop_mean_control+3*pop_sd_control)*100
+mean(pop_mean_control-3*pop_sd_control<=y & y<=pop_mean_control+3*pop_sd_control)
 ```
 
 ```
-## [1] 99.10314
+## [1] 0.9910314
 ```
 
 #### Problem 7

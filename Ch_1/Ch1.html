@@ -613,20 +613,20 @@ dat &lt;- na.omit( read.csv(filename) )</code></pre>
 <pre class="r"><code>y &lt;- filter(dat, Diet==&quot;chow&quot; &amp; Sex==&quot;M&quot;) %&gt;% select(Bodyweight) %&gt;% unlist
 pop_mean_control &lt;- mean(y)
 pop_sd_control &lt;- rafalib::popsd(y)
-mean(pop_mean_control-pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+pop_sd_control)*100</code></pre>
-<pre><code>## [1] 69.50673</code></pre>
+mean(pop_mean_control-pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+pop_sd_control)</code></pre>
+<pre><code>## [1] 0.6950673</code></pre>
 </div>
 <div id="problem-5-2" class="section level4">
 <h4>Problem 5</h4>
 <p>What proportion of these numbers are within two standard deviations away from the list’s average?</p>
-<pre class="r"><code>mean(pop_mean_control-2*pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+2*pop_sd_control)*100</code></pre>
-<pre><code>## [1] 94.61883</code></pre>
+<pre class="r"><code>mean(pop_mean_control-2*pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+2*pop_sd_control)</code></pre>
+<pre><code>## [1] 0.9461883</code></pre>
 </div>
 <div id="problem-6-2" class="section level4">
 <h4>Problem 6</h4>
 <p>What proportion of these numbers are within three standard deviations away from the list’s average?</p>
-<pre class="r"><code>mean(pop_mean_control-3*pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+3*pop_sd_control)*100</code></pre>
-<pre><code>## [1] 99.10314</code></pre>
+<pre class="r"><code>mean(pop_mean_control-3*pop_sd_control&lt;=y &amp; y&lt;=pop_mean_control+3*pop_sd_control)</code></pre>
+<pre><code>## [1] 0.9910314</code></pre>
 </div>
 <div id="problem-7-2" class="section level4">
 <h4>Problem 7</h4>
