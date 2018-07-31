@@ -228,52 +228,7 @@ dat <- na.omit( dat )
 #### Problem 1
 Use dplyr to create a vector x with the body weight of all males on the control (chow) diet. What is this population’s average?
 
-#### Problem 2
-Now use the rafalib package and use the popsd function to compute the population standard deviation.
-
-#### Problem 3
-Set the seed at 1. Take a random sample X of size 25 from x. What is the sample average?
-
-#### Problem 4
-Use dplyr to create a vector y with the body weight of all males on the high fat (hf) diet. What is this population’s average?
-
-#### Problem 5
-Now use the rafalib package and use the popsd function to compute the population standard deviation.
-
-#### Problem 6
-Set the seed at 1. Take a random sample Y of size 25 from y. What is the sample average?
-
-#### Problem 7
-What is the difference in absolute value between $\bar{Y}-\bar{X}$ and $\bar{X}-\bar{Y}$?
-
-#### Problem 8
-Repeat the above for females. Make sure to set the seed to 1 before each sample call. What is the difference in absolute value between $\bar{Y}-\bar{X}$ and $\bar{X}-\bar{Y}$?
-
-#### Problem 9
-For the females, our sample estimates were closer to the population difference than with males. What is a possible explanation for this?
-
-A) The population variance of the females is smaller than that of the males; thus, the sample variable has less variability.
-B) Statistical estimates are more precise for females.
-C) The sample size was larger for females.
-D) The sample size was smaller for females.
-
-### CLT and t-distribution exercises
-
-### CLT in practice exercises
-
-### Power calculations exercises
-
-### Monte carlo exercises
-
-### Permutation tests exercises
-
-#### Basic Intallation and setup
-
 ```r
-url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt"
-filename <- basename(url)
-download(url, destfile=filename)
-babies <- read.table("babies.txt", header=TRUE)
 library(dplyr)
 ```
 
@@ -295,6 +250,167 @@ library(dplyr)
 ```
 
 ```r
+x <- filter(dat, Diet=="chow" & Sex=="M") %>% select(Bodyweight) %>% unlist
+pop_mean_control <- mean(x)
+pop_mean_control
+```
+
+```
+## [1] 30.96381
+```
+
+#### Problem 2
+Now use the rafalib package and use the popsd function to compute the population standard deviation.
+
+```r
+library(rafalib)
+popsd(x)
+```
+
+```
+## [1] 4.420501
+```
+
+
+#### Problem 3
+Set the seed at 1. Take a random sample X of size 25 from x. What is the sample average?
+
+```r
+set.seed(1)
+sample_mean_control <- mean(sample(x,size=25))
+sample_mean_control
+```
+
+```
+## [1] 32.0956
+```
+
+#### Problem 4
+Use dplyr to create a vector y with the body weight of all males on the high fat (hf) diet. What is this population’s average?
+
+```r
+y <- filter(dat, Sex=="M" & Diet=="hf")  %>% select(Bodyweight) %>% unlist
+pop_mean_hf <- mean(y)
+pop_mean_hf
+```
+
+```
+## [1] 34.84793
+```
+
+#### Problem 5
+Now use the rafalib package and use the popsd function to compute the population standard deviation.
+
+```r
+popsd(y)
+```
+
+```
+## [1] 5.574609
+```
+
+
+#### Problem 6
+Set the seed at 1. Take a random sample Y of size 25 from y. What is the sample average?
+
+```r
+set.seed(1)
+sample_mean_hf <- mean(sample(y,size=25))
+sample_mean_hf
+```
+
+```
+## [1] 34.768
+```
+
+
+#### Problem 7
+What is the difference in absolute value between $\bar{y}-\bar{x}$ and $\bar{X}-\bar{Y}$?
+
+```r
+# Difference in control and hf population means $\bar{y}-\bar{x}$
+pop_diff <- pop_mean_hf - pop_mean_control
+sample_diff <- sample_mean_control - sample_mean_hf
+abs(pop_diff - sample_diff)
+```
+
+```
+## [1] 6.556516
+```
+
+
+#### Problem 8
+Repeat the above for females. Make sure to set the seed to 1 before each sample call. What is the difference in absolute value between $\bar{y}-\bar{x}$ and $\bar{X}-\bar{Y}$?
+
+```r
+# Filter Bodyweight for control females
+x <- filter(dat, Diet=="chow" & Sex=="F") %>% select(Bodyweight) %>% unlist
+pop_mean_control <- mean(x)
+popsd(x)
+```
+
+```
+## [1] 3.416438
+```
+
+```r
+set.seed(1)
+sample_mean_control <- mean(sample(x,size=25))
+
+# Filter Bodyweight for hf females
+y <- filter(dat, Sex=="F" & Diet=="hf")  %>% select(Bodyweight) %>% unlist
+pop_mean_hf <- mean(y)
+popsd(y)
+```
+
+```
+## [1] 5.06987
+```
+
+```r
+set.seed(1)
+sample_mean_hf <- mean(sample(y,size=25))
+
+# Difference in control and hf population means $\bar{y}-\bar{x}$
+pop_diff <- pop_mean_hf - pop_mean_control
+sample_diff <- sample_mean_control - sample_mean_hf
+abs(pop_diff - sample_diff)
+```
+
+```
+## [1] 5.487517
+```
+
+#### Problem 9
+For the females, our sample estimates were closer to the population difference than with males. What is a possible explanation for this?
+
+A) The population variance of the females is smaller than that of the males; thus, the sample variable has less variability.
+B) Statistical estimates are more precise for females.
+C) The sample size was larger for females.
+D) The sample size was smaller for females.
+
+```
+## [1] "The population variance for females is smaller both for control group (3.42 vs 4.42) and hf group (5.07 vs 5.57). So the samples have less variablility. A."
+```
+
+### CLT and t-distribution exercises
+
+### CLT in practice exercises
+
+### Power calculations exercises
+
+### Monte carlo exercises
+
+### Permutation tests exercises
+
+#### Basic Intallation and setup
+
+```r
+url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt"
+filename <- basename(url)
+download(url, destfile=filename)
+babies <- read.table("babies.txt", header=TRUE)
+library(dplyr)
 bwt.nonsmoke <- filter(babies, smoke==0) %>% select(bwt) %>% unlist 
 bwt.smoke <- filter(babies, smoke==1) %>% select(bwt) %>% unlist
 ```

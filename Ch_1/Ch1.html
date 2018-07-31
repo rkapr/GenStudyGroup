@@ -480,34 +480,90 @@ dat &lt;- read.csv(filename)</code></pre>
 <div id="problem-1-1" class="section level4">
 <h4>Problem 1</h4>
 <p>Use dplyr to create a vector x with the body weight of all males on the control (chow) diet. What is this population’s average?</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>x &lt;- filter(dat, Diet==&quot;chow&quot; &amp; Sex==&quot;M&quot;) %&gt;% select(Bodyweight) %&gt;% unlist
+pop_mean_control &lt;- mean(x)
+pop_mean_control</code></pre>
+<pre><code>## [1] 30.96381</code></pre>
 </div>
 <div id="problem-2-1" class="section level4">
 <h4>Problem 2</h4>
 <p>Now use the rafalib package and use the popsd function to compute the population standard deviation.</p>
+<pre class="r"><code>library(rafalib)
+popsd(x)</code></pre>
+<pre><code>## [1] 4.420501</code></pre>
 </div>
 <div id="problem-3-1" class="section level4">
 <h4>Problem 3</h4>
 <p>Set the seed at 1. Take a random sample X of size 25 from x. What is the sample average?</p>
+<pre class="r"><code>set.seed(1)
+sample_mean_control &lt;- mean(sample(x,size=25))
+sample_mean_control</code></pre>
+<pre><code>## [1] 32.0956</code></pre>
 </div>
 <div id="problem-4-1" class="section level4">
 <h4>Problem 4</h4>
 <p>Use dplyr to create a vector y with the body weight of all males on the high fat (hf) diet. What is this population’s average?</p>
+<pre class="r"><code>y &lt;- filter(dat, Sex==&quot;M&quot; &amp; Diet==&quot;hf&quot;)  %&gt;% select(Bodyweight) %&gt;% unlist
+pop_mean_hf &lt;- mean(y)
+pop_mean_hf</code></pre>
+<pre><code>## [1] 34.84793</code></pre>
 </div>
 <div id="problem-5-1" class="section level4">
 <h4>Problem 5</h4>
 <p>Now use the rafalib package and use the popsd function to compute the population standard deviation.</p>
+<pre class="r"><code>popsd(y)</code></pre>
+<pre><code>## [1] 5.574609</code></pre>
 </div>
 <div id="problem-6-1" class="section level4">
 <h4>Problem 6</h4>
 <p>Set the seed at 1. Take a random sample Y of size 25 from y. What is the sample average?</p>
+<pre class="r"><code>set.seed(1)
+sample_mean_hf &lt;- mean(sample(y,size=25))
+sample_mean_hf</code></pre>
+<pre><code>## [1] 34.768</code></pre>
 </div>
 <div id="problem-7-1" class="section level4">
 <h4>Problem 7</h4>
-<p>What is the difference in absolute value between <span class="math inline">\(\bar{Y}-\bar{X}\)</span> and <span class="math inline">\(\bar{X}-\bar{Y}\)</span>?</p>
+<p>What is the difference in absolute value between <span class="math inline">\(\bar{y}-\bar{x}\)</span> and <span class="math inline">\(\bar{X}-\bar{Y}\)</span>?</p>
+<pre class="r"><code># Difference in control and hf population means $\bar{y}-\bar{x}$
+pop_diff &lt;- pop_mean_hf - pop_mean_control
+sample_diff &lt;- sample_mean_control - sample_mean_hf
+abs(pop_diff - sample_diff)</code></pre>
+<pre><code>## [1] 6.556516</code></pre>
 </div>
 <div id="problem-8-1" class="section level4">
 <h4>Problem 8</h4>
-<p>Repeat the above for females. Make sure to set the seed to 1 before each sample call. What is the difference in absolute value between <span class="math inline">\(\bar{Y}-\bar{X}\)</span> and <span class="math inline">\(\bar{X}-\bar{Y}\)</span>?</p>
+<p>Repeat the above for females. Make sure to set the seed to 1 before each sample call. What is the difference in absolute value between <span class="math inline">\(\bar{y}-\bar{x}\)</span> and <span class="math inline">\(\bar{X}-\bar{Y}\)</span>?</p>
+<pre class="r"><code># Filter Bodyweight for control females
+x &lt;- filter(dat, Diet==&quot;chow&quot; &amp; Sex==&quot;F&quot;) %&gt;% select(Bodyweight) %&gt;% unlist
+pop_mean_control &lt;- mean(x)
+popsd(x)</code></pre>
+<pre><code>## [1] 3.416438</code></pre>
+<pre class="r"><code>set.seed(1)
+sample_mean_control &lt;- mean(sample(x,size=25))
+
+# Filter Bodyweight for hf females
+y &lt;- filter(dat, Sex==&quot;F&quot; &amp; Diet==&quot;hf&quot;)  %&gt;% select(Bodyweight) %&gt;% unlist
+pop_mean_hf &lt;- mean(y)
+popsd(y)</code></pre>
+<pre><code>## [1] 5.06987</code></pre>
+<pre class="r"><code>set.seed(1)
+sample_mean_hf &lt;- mean(sample(y,size=25))
+
+# Difference in control and hf population means $\bar{y}-\bar{x}$
+pop_diff &lt;- pop_mean_hf - pop_mean_control
+sample_diff &lt;- sample_mean_control - sample_mean_hf
+abs(pop_diff - sample_diff)</code></pre>
+<pre><code>## [1] 5.487517</code></pre>
 </div>
 <div id="problem-9-1" class="section level4">
 <h4>Problem 9</h4>
@@ -518,6 +574,7 @@ dat &lt;- read.csv(filename)</code></pre>
 <li>The sample size was larger for females.</li>
 <li>The sample size was smaller for females.</li>
 </ol>
+<pre><code>## [1] &quot;The population variance for females is smaller both for control group (3.42 vs 4.42) and hf group (5.07 vs 5.57). So the samples have less variablility. A.&quot;</code></pre>
 </div>
 </div>
 <div id="clt-and-t-distribution-exercises" class="section level3">
@@ -540,16 +597,8 @@ dat &lt;- read.csv(filename)</code></pre>
 filename &lt;- basename(url)
 download(url, destfile=filename)
 babies &lt;- read.table(&quot;babies.txt&quot;, header=TRUE)
-library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
+library(dplyr)
+bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
 bwt.smoke &lt;- filter(babies, smoke==1) %&gt;% select(bwt) %&gt;% unlist</code></pre>
 </div>
 <div id="problem-1-2" class="section level4">
