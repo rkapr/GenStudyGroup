@@ -1134,7 +1134,7 @@ Set the seed at 1, then use the `replicate` function to repeat the code used in 
 Note that, not surprisingly, the power is lower than 10%. Repeat the exercise above for samples sizes of 30, 60, 90 and 120. Which of those four gives you power of about 80%?
 
 #### Problem 12
-Repeat problem 11, but now require an α level of 0.01. Which of those four gives you power of about 80%?
+Repeat problem 11, but now require an $\alpha$ level of 0.01. Which of those four gives you power of about 80%?
 
 ### Monte carlo exercises
 
@@ -1164,8 +1164,7 @@ smokers <- sample(bwt.smoke , N)
 obs <- mean(smokers) - mean(nonsmokers)
 ```
 The question is whether this observed difference is statistically significant. We do not want to rely on the assumptions needed for the normal or t-distribution approximations to hold, so instead we will use permutations. We will reshuffle the data and recompute the mean. We can create one permuted sample with the following code:
-
-```r
+```
 dat <- c(smokers,nonsmokers)
 shuffle <- sample( dat )
 smokersstar <- shuffle[1:N]
@@ -1173,14 +1172,50 @@ nonsmokersstar <- shuffle[(N+1):(2*N)]
 mean(smokersstar)-mean(nonsmokersstar)
 ```
 
-```
-## [1] -8.5
-```
-
 The last value is one observation from the null distribution we will construct. Set the seed at 1, and then repeat the permutation 1,000 times to create a null distribution. What is the permutation derived p-value for our observation?
 
+```r
+dat <- c(smokers,nonsmokers)
+avgdiff <- replicate(1000, {
+  shuffle <- sample( dat )
+  smokersstar <- shuffle[1:N]
+  nonsmokersstar <- shuffle[(N+1):(2*N)]
+  return(mean(smokersstar)-mean(nonsmokersstar))
+})
+```
+
+```r
+#the proportion of permutations with larger difference
+p = (sum(abs(avgdiff) > abs(obs)) + 1) / (length(avgdiff) + 1)
+p
+```
+
+```
+## [1] 0.05394605
+```
+
 #### Problem 2
-Repeat the above exercise, but instead of the differences in mean, consider the differences in `median obs <- median(smokers) - median(nonsmokers)`. What is the permutation based p-value?
+Repeat the above exercise, but instead of the differences in mean, consider the differences in median `obs <- median(smokers) - median(nonsmokers)`. What is the permutation based p-value?
+
+```r
+obs <- median(smokers) - median(nonsmokers)
+avgdiff <- replicate(1000, {
+  shuffle <- sample( dat )
+  smokersstar <- shuffle[1:N]
+  nonsmokersstar <- shuffle[(N+1):(2*N)]
+  return(median(smokersstar)-median(nonsmokersstar))
+})
+```
+
+```r
+#the proportion of permutations with larger difference
+p = (sum(abs(avgdiff) > abs(obs)) + 1) / (length(avgdiff) + 1)
+p
+```
+
+```
+## [1] 0.01798202
+```
 
 ### Association tests exercises
 
@@ -1196,8 +1231,142 @@ dat <- read.csv(filename)
 #### Problem 1
 This dataframe reflects the allele status (either AA/Aa or aa) and the case/control status for 72 individuals. Compute the Chi-square test for the association of genotype with case/control status (using the table function and the chisq.test function). Examine the table to see if there appears to be an association. What is the X-squared statistic?
 
+```r
+head(dat)
+```
+
+```
+##   allele case
+## 1      0    1
+## 2      0    0
+## 3      1    1
+## 4      1    1
+## 5      1    1
+## 6      0    0
+```
+
+```r
+table(dat)
+```
+
+```
+##       case
+## allele  0  1
+##      0 17 17
+##      1 10 28
+```
+
+```r
+table(dat['case'])
+```
+
+```
+## 
+##  0  1 
+## 27 45
+```
+
+```r
+table(dat['allele'])
+```
+
+```
+## 
+##  0  1 
+## 34 38
+```
+
+```r
+tab <- table(dat)
+```
+Find odds ratio:
+odds of having the disease with allele 1/odds of having the disease with allele 0
+
+```r
+(tab[2,2]/tab[2,1]) / (tab[1,2]/tab[1,1])
+```
+
+```
+## [1] 2.8
+```
+Find prob of disease under null:
+
+```r
+p <- mean(dat['case']==1)
+p
+```
+
+```
+## [1] 0.625
+```
+The expected table is therefore:
+
+```r
+expected <- rbind(c(1-p,p)*sum(dat['allele']==0),
+                  c(1-p,p)*sum(dat['allele']==1))
+dimnames(expected)<-dimnames(tab)
+expected
+```
+
+```
+##       case
+## allele     0     1
+##      0 12.75 21.25
+##      1 14.25 23.75
+```
+
+```r
+chisq.test(tab)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test with Yates' continuity correction
+## 
+## data:  tab
+## X-squared = 3.3437, df = 1, p-value = 0.06746
+```
+
+```r
+chisq.test(tab)$p.value
+```
+
+```
+## [1] 0.06746466
+```
+Chi-squared statistic
+
+```r
+chisq.test(tab)$statistic
+```
+
+```
+## X-squared 
+##  3.343653
+```
+
+```
+## [1] "Since p-value is not significant, there is not much difference in case/control status due to allele."
+```
 
 #### Problem 2
 Compute Fisher’s exact test fisher.test for the same table. What is the p-value?
 
+```r
+fisher.test(tab)
+```
+
+```
+## 
+## 	Fisher's Exact Test for Count Data
+## 
+## data:  tab
+## p-value = 0.05194
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.940442 8.493001
+## sample estimates:
+## odds ratio 
+##   2.758532
+```
 
