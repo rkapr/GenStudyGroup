@@ -466,6 +466,45 @@ d&amp;-b\\
 </div>
 <div id="standard-errors-exercises" class="section level3">
 <h3>Standard Errors Exercises</h3>
+<p>In the previous assessment, we used a Monte Carlo technique to see that the linear model coefficients are random variables when the data is a random sample. Now we will use the previously seen matrix algebra to try to estimate the standard error of the linear model coefficients. Again, take a random sample of the <code>father.son</code> heights data:</p>
+<pre><code>library(UsingR)
+N &lt;- 50
+set.seed(1)
+index &lt;- sample(n,N)
+sampledat &lt;- father.son[index,]
+x &lt;- sampledat$fheight
+y &lt;- sampledat$sheight
+betahat &lt;- lm(y~x)$coef</code></pre>
+<p>The formula for the standard error is:</p>
+<p><span class="math display">\[\mbox{SE}(\hat{\beta}) = \sqrt{\mbox{var}(\hat{\beta})}\]</span> with:</p>
+<p><span class="math display">\[\mbox{var}(\hat{\beta}) = \sigma^2 (X^\top X)^{-1}\]</span> We will estimate or calculate each part of this equation and then combine them.</p>
+<p>First, we want to estimate <span class="math inline">\(\sigma^2\)</span>, the variance of <span class="math inline">\(Y\)</span>. As we have seen in the previous unit, the random part of Y is only coming from <span class="math inline">\(\varepsilon\)</span>, because we assume <span class="math inline">\(X\beta\)</span> is fixed. So we can try to estimate the variance of the <span class="math inline">\(\varepsilon\)</span> s from the residuals, the <span class="math inline">\(Y_i\)</span> minus the fitted values from the linear model.</p>
+<div id="problem-1-3" class="section level4">
+<h4>Problem 1</h4>
+<p>The fitted values <span class="math inline">\(\hat{Y}\)</span> from a linear model can be obtained with:</p>
+<pre><code>fit &lt;- lm(y ~ x)
+fit$fitted.values</code></pre>
+<p>What is the sum of the squared residuals, where residuals are given by <span class="math inline">\(r_i = Y_i - \hat{Y}_i\)</span> ?</p>
+</div>
+<div id="problem-2-2" class="section level4">
+<h4>Problem 2</h4>
+<p>Our estimate of <span class="math inline">\(\sigma^2\)</span> will be the sum of squared residuals divided by <span class="math inline">\(N - p\)</span>, the sample size minus the number of terms in the model. Since we have a sample of 50 and 2 terms in the model (an intercept and a slope), our estimate of <span class="math inline">\(\sigma^2\)</span> will be the sum of squared residuals divided by 48. Use the answer from exercise 1 to provide an estimate of <span class="math inline">\(\sigma^2\)</span>.</p>
+</div>
+<div id="problem-3-1" class="section level4">
+<h4>Problem 3</h4>
+<p>Form the design matrix <span class="math inline">\(X\)</span> (Note: use a capital <code>X</code>). This can be done by combining a column of 1’s with a column containg ‘<code>x</code>’ , the fathers’ heights.</p>
+<pre><code>N &lt;- 50
+X &lt;- cbind(rep(1,N), x)</code></pre>
+<p>Now calculate <span class="math inline">\((X^\top X)^{-1}\)</span>. Use the solve function for the inverse and t for the transpose. What is the element in the first row, first column?</p>
+</div>
+<div id="problem-4-1" class="section level4">
+<h4>Problem 4</h4>
+<p>Now we are one step away from the standard error of <span class="math inline">\(\hat{\beta}\)</span>. Take the diagonals from the <span class="math inline">\((X^\top X)^{-1}\)</span> matrix above, using the diag function. Multiply our estimate of <span class="math inline">\(\sigma^2\)</span> and the diagonals of this matrix. This is the estimated variance of <span class="math inline">\(\hat{\beta}\)</span>, so take the square root of this. You should end up with two numbers: the standard error for the intercept and the standard error for the slope.</p>
+<p>What is the standard error for the slope?</p>
+<p>Compare your answer to this last question, to the value you estimated using Monte Carlo in the previous set of exercises. It will not be the same because we are only estimating the standard error given a particular sample of 50 (which we obtained with <code>set.seed(1)</code>).</p>
+<p>Notice that the standard error estimate is also printed in the second column of:</p>
+<pre><code>summary(fit)</code></pre>
+</div>
 </div>
 <div id="interactions-and-contrasts" class="section level3">
 <h3>Interactions and Contrasts</h3>
@@ -490,7 +529,7 @@ condition &lt;- factor(c(&quot;control&quot;,&quot;treated&quot;,&quot;control&q
 ## attr(,&quot;contrasts&quot;)$condition
 ## [1] &quot;contr.treatment&quot;</code></pre>
 </div>
-<div id="problem-1-3" class="section level4">
+<div id="problem-1-4" class="section level4">
 <h4>Problem 1</h4>
 <p>Suppose we want to build a contrast of coefficients for the above experimental design.</p>
 <p>You can either figure this question out by looking at the design matrix, or by using the <code>contrast</code> function from the contrast library with random numbers for <code>y</code>. The contrast vector will be returned as <code>contrast(...)$X</code>.</p>
@@ -504,12 +543,12 @@ condition &lt;- factor(c(&quot;control&quot;,&quot;treated&quot;,&quot;control&q
 <li>1 0 1</li>
 </ol>
 </div>
-<div id="problem-2-2" class="section level4">
+<div id="problem-2-3" class="section level4">
 <h4>Problem 2</h4>
 <p>Use the Rmd script to load the spider dataset. Suppose we build a model using two variables: <code>~ type + leg</code>.</p>
 <p>What is the t-statistic for the contrast of leg pair L4 vs. leg pair L2?</p>
 </div>
-<div id="problem-3-1" class="section level4">
+<div id="problem-3-2" class="section level4">
 <h4>Problem 3</h4>
 <p>The t-statistic for the contrast of leg pair L4 vs. leg pair L2 is constructed by taking the difference of the estimated coefficients legL4 and legL2, and then dividing by the standard error of the difference.</p>
 <p>For a contrast vector <span class="math inline">\(\mathbf{C}\)</span>, the standard error of the contrast <span class="math inline">\(\mathbf{C}\hat{\boldsymbol{\beta}}\)</span> is:</p>
@@ -521,7 +560,7 @@ Sigma.hat &lt;- sum(fitTL$residuals^2)/(nrow(X) - ncol(X)) * solve(t(X) %*% X)</
 <p>Using the estimate of <span class="math inline">\(\Sigma\)</span>, what is your estimate of <span class="math inline">\(\mbox{cov}(\hat{\beta}_{L4}, \hat{\beta}_{L2})\)</span> ? Our contrast matrix for the desired comparison is:</p>
 <pre class="r"><code> C &lt;- matrix(c(0,0,-1,0,1),1,5)</code></pre>
 </div>
-<div id="problem-4-1" class="section level4">
+<div id="problem-4-2" class="section level4">
 <h4>Problem 4</h4>
 <p>Suppose that we notice that the within-group variances for the groups with smaller frictional coefficients are generally smaller, and so we try to apply a transformation to the frictional coefficients to make the within-group variances more constant.</p>
 <p>Add a new variable <code>log2friction</code> to the spider dataframe:</p>
@@ -546,7 +585,7 @@ Sigma.hat &lt;- sum(fitTL$residuals^2)/(nrow(X) - ncol(X)) * solve(t(X) %*% X)</
 </div>
 <div id="collinearity-exercises" class="section level3">
 <h3>Collinearity exercises</h3>
-<div id="problem-1-4" class="section level4">
+<div id="problem-1-5" class="section level4">
 <h4>Problem 1:</h4>
 <p>Consider these design matrices:</p>
 <p><span class="math display">\[A=\begin{pmatrix}
@@ -591,7 +630,7 @@ F=\begin{pmatrix}
 \end{pmatrix}\]</span></p>
 <p>Which of the above design matrices does NOT have the problem of collinearity?</p>
 </div>
-<div id="problem-2-3" class="section level4">
+<div id="problem-2-4" class="section level4">
 <h4>Problem 2:</h4>
 <p>The following exercises are advanced. Let’s use the example from the lecture to visualize how there is not a single best <span class="math inline">\(\hat{\beta}\)</span>, when the design matrix has collinearity of columns. An example can be made with:</p>
 <pre class="r"><code>sex &lt;- factor(rep(c(&quot;female&quot;,&quot;male&quot;),each=4))
@@ -617,7 +656,7 @@ trt &lt;- factor(c(&quot;A&quot;,&quot;A&quot;,&quot;B&quot;,&quot;B&quot;,&quot
  }</code></pre>
 <p>What is the sum of squared residuals when the male coefficient is 1 and the D coefficient is 2, and the other coefficients are fit using the linear model solution?</p>
 </div>
-<div id="problem-3-2" class="section level4">
+<div id="problem-3-3" class="section level4">
 <h4>Problem 3:</h4>
 <p>We can apply our function fitTheRest to a grid of values for <span class="math inline">\(\beta_{male}\)</span> and <span class="math inline">\(\beta_D\)</span>, using the outer function in R. outer takes three arguments: a grid of values for the first argument, a grid of values for the second argument, and finally a function which takes two arguments.</p>
 <p>Try it out:</p>
