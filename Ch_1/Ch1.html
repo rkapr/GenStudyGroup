@@ -942,6 +942,111 @@ result$p.value</code></pre>
 </div>
 <div id="power-calculations-exercises" class="section level3">
 <h3>Power calculations exercises</h3>
+<div id="basic-installation-and-setup-1" class="section level4">
+<h4>Basic Installation and setup</h4>
+<p>For these exercises we will load the babies dataset from babies.txt. We will use this data to review the concepts behind the p-values and then test confidence interval concepts.</p>
+<pre class="r"><code>url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt&quot;
+filename &lt;- basename(url)
+download(url, destfile=filename)
+babies &lt;- read.table(&quot;babies.txt&quot;, header=TRUE)</code></pre>
+<p>This is a large dataset (1,236 cases), and we will pretend that it contains the entire population in which we are interested. We will study the differences in birth weight between babies born to smoking and non-smoking mothers.</p>
+<p>First, let’s split this into two birth weight datasets: one of birth weights to non-smoking mothers and the other of birth weights to smoking mothers.</p>
+<pre class="r"><code>bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
+bwt.smoke &lt;- filter(babies, smoke==1) %&gt;% select(bwt) %&gt;% unlist</code></pre>
+<p>Now, we can look for the true population difference in means between smoking and non-smoking birth weights.</p>
+<pre class="r"><code>library(rafalib)
+mean(bwt.nonsmoke)-mean(bwt.smoke)</code></pre>
+<pre><code>## [1] 8.937666</code></pre>
+<pre class="r"><code>popsd(bwt.nonsmoke)</code></pre>
+<pre><code>## [1] 17.38696</code></pre>
+<pre class="r"><code>popsd(bwt.smoke)</code></pre>
+<pre><code>## [1] 18.08024</code></pre>
+<p>The population difference of mean birth weights is about 8.9 ounces. The standard deviations of the nonsmoking and smoking groups are about 17.4 and 18.1 ounces, respectively.</p>
+<p>As we did with the mouse weight data, this assessment interactively reviews inference concepts using simulations in R. We will treat the babies dataset as the full population and draw samples from it to simulate individual experiments. We will then ask whether somebody who only received the random samples would be able to draw correct conclusions about the population.</p>
+<p>We are interested in testing whether the birth weights of babies born to non-smoking mothers are significantly different from the birth weights of babies born to smoking mothers.</p>
+</div>
+<div id="problem-1-4" class="section level4">
+<h4>Problem 1</h4>
+<p>Set the seed at 1 and obtain two samples, each of size <code>N=25</code>, from non-smoking mothers (<code>dat.ns</code>) and smoking mothers (<code>dat.s</code>). Compute the t-statistic (call it <code>tval</code>).</p>
+</div>
+<div id="problem-2-4" class="section level4">
+<h4>Problem 2</h4>
+<p>Recall that we summarize our data using a t-statistics because we know that in situations where the null hypothesis is true (what we mean when we say “under the null”) and the sample size is relatively large, this t-value will have an approximate standard normal distribution. Because we know the distribution of the t-value under the null, we can quantitatively determine how unusual the observed t-value would be if the null hypothesis were true.</p>
+<p>The standard procedure is to examine the probability a t-statistic that actually does follow the null hypothesis would have larger absolute value than the absolute value of the t-value we just observed – this is called a two-sided test.</p>
+<p>We have computed these by taking one minus the area under the standard normal curve between <code>-abs(tval)</code> and <code>abs(tval)</code>. In R, we can do this by using the <code>pnorm</code> function, which computes the area under a normal curve from negative infinity up to the value given as its first argument:</p>
+</div>
+<div id="problem-3-4" class="section level4">
+<h4>Problem 3</h4>
+<p>Because of the symmetry of the standard normal distribution, there is a simpler way to calculate the probability that a t-value under the null could have a larger absolute value than tval. Choose the simplified calculation from the following:</p>
+<ol style="list-style-type: upper-alpha">
+<li><code>1-2*pnorm(abs(tval))</code></li>
+<li><code>1-2*pnorm(-abs(tval))</code></li>
+<li><code>1-pnorm(-abs(tval))</code></li>
+<li><code>2*pnorm(-abs(tval))</code></li>
+</ol>
+</div>
+<div id="problem-4-4" class="section level4">
+<h4>Problem 4</h4>
+<p>By reporting only p-values, many scientific publications provide an incomplete story of their findings. As we have mentioned, with very large sample sizes, scientifically insignificant differences between two groups can lead to small p-values. Confidence intervals are more informative as they include the estimate itself. Our estimate of the difference between babies of smoker and non-smokers: <code>mean(dat.s) - mean( dat.ns)</code>. If we use the CLT, what quantity would we add and subtract to this estimate to obtain a 99% confidence interval?</p>
+</div>
+<div id="problem-5-4" class="section level4">
+<h4>Problem 5</h4>
+<p>If instead of CLT, we use the t-distribution approximation, what do we add and subtract (use <code>2*N-2</code> degrees of freedom)?</p>
+</div>
+<div id="problem-6-4" class="section level4">
+<h4>Problem 6</h4>
+<p>Why are the values from 4 and 5 so similar?</p>
+<ol style="list-style-type: upper-alpha">
+<li>Coincidence.</li>
+<li>They are both related to 99% confidence intervals.</li>
+<li>N and thus the degrees of freedom is large enough to make the normal and t-distributions very similar.</li>
+<li>They are actually quite different, differing by more than 1 ounce.</li>
+</ol>
+</div>
+<div id="problem-7-4" class="section level4">
+<h4>Problem 7</h4>
+<p>No matter which way you compute it, the p-value <code>pval</code> is the probability that the null hypothesis could have generated a t-statistic more extreme than than what we observed: tval. If the p-value is very small, this means that observing a value more extreme than <code>tval</code> would be very rare if the null hypothesis were true, and would give strong evidence that we should reject the null hypothesis. We determine how small the p-value needs to be to reject the null by deciding how often we would be willing to mistakenly reject the null hypothesis.</p>
+<p>The standard decision rule is the following: choose some small value <span class="math inline">\(\alpha\)</span> (in most disciplines the conventional choice is <span class="math inline">\(\alpha=0.05\)</span>) and reject the null hypothesis if the p-value is less than <span class="math inline">\(\alpha\)</span>. We call <span class="math inline">\(\alpha\)</span> the significance level of the test.</p>
+<p>It turns out that if we follow this decision rule, the probability that we will reject the null hypothesis by mistake is equal to <span class="math inline">\(\alpha\)</span>. (This fact is not immediately obvious and requires some probability theory to show.) We call the event of rejecting the null hypothesis, when it is in fact true, a <em>Type I</em> error, we call the probability of making a <em>Type I</em> error, the <em>Type I</em> error rate, and we say that rejecting the null hypothesis when the p-value is less than <span class="math inline">\(\alpha\)</span>, controls the <em>Type I</em> error rate so that it is equal to <span class="math inline">\(\alpha\)</span>. We will see a number of decision rules that we use in order to control the probabilities of other types of errors. Often, we will guarantee that the probability of an error is less than some level, but, in this case, we can guarantee that the probability of a <em>Type I</em> error is exactly equal to <span class="math inline">\(\alpha\)</span>.</p>
+<p>Which of the following sentences about a <em>Type I</em> error is not true?</p>
+<ol style="list-style-type: upper-alpha">
+<li>The following is another way to describe a <em>Type I</em> error: you decided to reject the null hypothesis on the basis of data that was actually generated by the null hypothesis.</li>
+<li>The following is the another way to describe a <em>Type I</em> error: due to random fluctuations, even though the data you observed were actually generated by the null hypothesis, the p-value calculated from the observed data was small, so you rejected it.</li>
+<li>From the original data alone, you can tell whether you have made a <em>Type I</em> error.</li>
+<li>In scientific practice, a <em>Type I</em> error constitutes reporting a “significant” result when there is actually no result.</li>
+</ol>
+</div>
+<div id="problem-8-4" class="section level4">
+<h4>Problem 8</h4>
+<p>In the simulation we have set up here, we know the null hypothesis is false – the true value of difference in means is actually around 8.9. Thus, we are concerned with how often the decision rule outlined in the last section allows us to conclude that the null hypothesis is actually false. In other words, we would like to quantify the <em>Type II</em> error rate of the test, or the probability that we fail to reject the null hypothesis when the alternative hypothesis is true.</p>
+<p>Unlike the <em>Type I</em> error rate, which we can characterize by assuming that the null hypothesis of “no difference” is true, the <em>Type II</em> error rate cannot be computed by assuming the alternative hypothesis alone because the alternative hypothesis alone does not specify a particular value for the difference. It thus does not nail down a specific distribution for the t-value under the alternative.</p>
+<p>For this reason, when we study the <em>Type II</em> error rate of a hypothesis testing procedure, we need to assume a particular effect size, or hypothetical size of the difference between population means, that we wish to target. We ask questions such as “what is the smallest difference I could reliably distinguish from 0 given my sample size <span class="math inline">\(N\)</span>? or, morecommonly ,”How big does <span class="math inline">\(N\)</span> have to be in order to detect that the absolute value of the difference is greater than zero?” <em>Type II</em> error control plays a major role in designing data collection procedures <strong>before</strong> you actually see the data, so that you know the test you will run has enough sensitivity or power. Power is one minus the <em>Type II</em> error rate, or the probability that you will reject the null hypothesis when the alternative hypothesis is true.</p>
+<p>There are several aspects of a hypothesis test that affect its power for a particular effect size. Intuitively, setting a lower <span class="math inline">\(\alpha\)</span> decreases the power of the test for a given effect size because the null hypothesis will be more difficult to reject. This means that for an experiment with fixed parameters (i.e., with a predetermined sample size, recording mechanism, etc), the power of the hypothesis test trades off with its <em>Type I</em> error rate, no matter what effect size you target.</p>
+<p>We can explore the trade off of power and <em>Type I</em> error concretely using the babies data. Since we have the full population, we know what the true effect size is (about 8.93) and we can compute the power of the test for true difference between populations.</p>
+<p>Set the seed at 1 and take a random sample of <span class="math inline">\(N=5\)</span> measurements from each of the smoking and nonsmoking datasets. What is the p-value (use the <code>t.test</code> function)?</p>
+</div>
+<div id="problem-9-4" class="section level4">
+<h4>Problem 9</h4>
+<p>The p-value is larger than 0.05 so using the typical cut-off, we would not reject. This is a <em>Type II</em> error. Which of the following is <strong>not</strong> a way to decrease this type of error?</p>
+<ol style="list-style-type: upper-alpha">
+<li>Increase our chance of a <em>Type I</em> error.</li>
+<li>Take a larger sample size.</li>
+<li>Find a population for which the null is not true.</li>
+<li>Use a higher <span class="math inline">\(\alpha\)</span> level.</li>
+</ol>
+</div>
+<div id="problem-10-3" class="section level4">
+<h4>Problem 10</h4>
+<p>Set the seed at 1, then use the <code>replicate</code> function to repeat the code used in exercise 9 10,000 times. What proportion of the time do we reject at the 0.05 level?</p>
+</div>
+<div id="problem-11-2" class="section level4">
+<h4>Problem 11</h4>
+<p>Note that, not surprisingly, the power is lower than 10%. Repeat the exercise above for samples sizes of 30, 60, 90 and 120. Which of those four gives you power of about 80%?</p>
+</div>
+<div id="problem-12-2" class="section level4">
+<h4>Problem 12</h4>
+<p>Repeat problem 11, but now require an α level of 0.01. Which of those four gives you power of about 80%?</p>
+</div>
 </div>
 <div id="monte-carlo-exercises" class="section level3">
 <h3>Monte carlo exercises</h3>
@@ -958,7 +1063,7 @@ library(dplyr)
 bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
 bwt.smoke &lt;- filter(babies, smoke==1) %&gt;% select(bwt) %&gt;% unlist</code></pre>
 </div>
-<div id="problem-1-4" class="section level4">
+<div id="problem-1-5" class="section level4">
 <h4>Problem 1</h4>
 <p>We will generate the following random variable based on a sample size of 10 and observe the following difference:</p>
 <pre class="r"><code>N=10
@@ -975,7 +1080,7 @@ mean(smokersstar)-mean(nonsmokersstar)</code></pre>
 <pre><code>## [1] -8.5</code></pre>
 <p>The last value is one observation from the null distribution we will construct. Set the seed at 1, and then repeat the permutation 1,000 times to create a null distribution. What is the permutation derived p-value for our observation?</p>
 </div>
-<div id="problem-2-4" class="section level4">
+<div id="problem-2-5" class="section level4">
 <h4>Problem 2</h4>
 <p>Repeat the above exercise, but instead of the differences in mean, consider the differences in <code>median obs &lt;- median(smokers) - median(nonsmokers)</code>. What is the permutation based p-value?</p>
 </div>
@@ -990,11 +1095,11 @@ filename &lt;- basename(url)
 download(url, destfile=filename)
 dat &lt;- read.csv(filename)</code></pre>
 </div>
-<div id="problem-1-5" class="section level4">
+<div id="problem-1-6" class="section level4">
 <h4>Problem 1</h4>
 <p>This dataframe reflects the allele status (either AA/Aa or aa) and the case/control status for 72 individuals. Compute the Chi-square test for the association of genotype with case/control status (using the table function and the chisq.test function). Examine the table to see if there appears to be an association. What is the X-squared statistic?</p>
 </div>
-<div id="problem-2-5" class="section level4">
+<div id="problem-2-6" class="section level4">
 <h4>Problem 2</h4>
 <p>Compute Fisher’s exact test fisher.test for the same table. What is the p-value?</p>
 </div>
