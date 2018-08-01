@@ -20,7 +20,7 @@ Code for this page was tested in R version `r getRversion()`. Check RMarkdown fi
 sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
 ```
 
-### Introduction to using regression exercises
+### Introduction to Using Regression exercises
 
 #### Basic setup and installation
 
