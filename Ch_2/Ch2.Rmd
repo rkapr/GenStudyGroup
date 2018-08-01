@@ -91,6 +91,9 @@ par(mfrow = c(1,1))
 
 median(timeM)-median(timeF)
 ```
+```{r echo=FALSE}
+print("C. Male and females have similar right skewed distributions with the former, 20 minutes shifted to the left.")
+```
 
 #### Problem 6
 Use `dplyr` to create two new data frames: males and females, with the data for each gender. For males, what is the Pearson correlation between age and time to finish?

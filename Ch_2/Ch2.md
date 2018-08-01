@@ -143,6 +143,10 @@ median(timeM)-median(timeF)
 ## [1] -21.70833
 ```
 
+```
+## [1] "C. Male and females have similar right skewed distributions with the former, 20 minutes shifted to the left."
+```
+
 #### Problem 6
 Use `dplyr` to create two new data frames: males and females, with the data for each gender. For males, what is the Pearson correlation between age and time to finish?
 
@@ -182,7 +186,7 @@ groups <- split(unlist(nym.2002['time']),round(unlist(nym.2002['age'])/5)*5)
 boxplot(groups, xlab  = "age", ylab = "time to finish")
 ```
 
-![](Ch2_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](Ch2_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 ```
 ## [1] "C. The optimal age to run a marathon is 20-25."
