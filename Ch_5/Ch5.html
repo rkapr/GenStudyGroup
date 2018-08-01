@@ -469,10 +469,84 @@ d&amp;-b\\
 </div>
 <div id="interactions-and-contrasts" class="section level3">
 <h3>Interactions and Contrasts</h3>
+<div id="basic-installation-and-setup" class="section level4">
+<h4>Basic installation and setup</h4>
+<p>Suppose we have an experiment with two species A and B, and two conditions, control and treated.</p>
+<pre class="r"><code>species &lt;- factor(c(&quot;A&quot;,&quot;A&quot;,&quot;B&quot;,&quot;B&quot;))
+condition &lt;- factor(c(&quot;control&quot;,&quot;treated&quot;,&quot;control&quot;,&quot;treated&quot;))</code></pre>
+<p>We will use the formula of <code>~ species + condition</code> to create the model matrix:</p>
+<pre class="r"><code>model.matrix(~ species + condition)</code></pre>
+<pre><code>##   (Intercept) speciesB conditiontreated
+## 1           1        0                0
+## 2           1        0                1
+## 3           1        1                0
+## 4           1        1                1
+## attr(,&quot;assign&quot;)
+## [1] 0 1 2
+## attr(,&quot;contrasts&quot;)
+## attr(,&quot;contrasts&quot;)$species
+## [1] &quot;contr.treatment&quot;
+## 
+## attr(,&quot;contrasts&quot;)$condition
+## [1] &quot;contr.treatment&quot;</code></pre>
+</div>
+<div id="problem-1-3" class="section level4">
+<h4>Problem 1</h4>
+<p>Suppose we want to build a contrast of coefficients for the above experimental design.</p>
+<p>You can either figure this question out by looking at the design matrix, or by using the <code>contrast</code> function from the contrast library with random numbers for <code>y</code>. The contrast vector will be returned as <code>contrast(...)$X</code>.</p>
+<p>What should the contrast vector be, to obtain the difference between the species B control group and the species A treatment group (species B control - species A treatment)? Assume that the coefficients (columns of design matrix) are: Intercept, speciesB, conditiontreated.</p>
+<ol style="list-style-type: upper-alpha">
+<li>0 0 1</li>
+<li>0 -1 0</li>
+<li>0 1 1</li>
+<li>0 1 -1</li>
+<li>0 -1 1</li>
+<li>1 0 1</li>
+</ol>
+</div>
+<div id="problem-2-2" class="section level4">
+<h4>Problem 2</h4>
+<p>Use the Rmd script to load the spider dataset. Suppose we build a model using two variables: <code>~ type + leg</code>.</p>
+<p>What is the t-statistic for the contrast of leg pair L4 vs. leg pair L2?</p>
+</div>
+<div id="problem-3-1" class="section level4">
+<h4>Problem 3</h4>
+<p>The t-statistic for the contrast of leg pair L4 vs. leg pair L2 is constructed by taking the difference of the estimated coefficients legL4 and legL2, and then dividing by the standard error of the difference.</p>
+<p>For a contrast vector <span class="math inline">\(\mathbf{C}\)</span>, the standard error of the contrast <span class="math inline">\(\mathbf{C}\hat{\boldsymbol{\beta}}\)</span> is:</p>
+<p><span class="math display">\[\sqrt{ \mathbf{C} \hat{\boldsymbol{\Sigma}} \mathbf{C}^\top }\]</span> with <span class="math inline">\(\hat{\boldsymbol{\Sigma}}\)</span> the estimated covariance matrix of the coefficient estimates <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>. The covariance matrix contains elements which give the variance or covariance of elements in <span class="math inline">\(\hat{\beta}\)</span>. The elements on the diagonal of the <span class="math inline">\(\boldsymbol{\hat{\Sigma}}\)</span> matrix give the estimated variance of each element in <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>. The square root of these is the standard error of the elements in <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>. The off-diagonal elements of <span class="math inline">\(\hat{\Sigma}\)</span> give the estimated covariance of two different elements of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>. So <span class="math inline">\(\hat{\Sigma}_{1,2}\)</span> gives the covariance of the first and second element of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>. The <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> matrix is symmetric, which means <span class="math inline">\(\hat{\Sigma}_{i,j}=\hat{\Sigma}_{j,i}\)</span>.</p>
+<p>For the difference, we have that:</p>
+<p><span class="math display">\[\mbox{var}(\hat{\beta }_{L4} - \hat{\beta }_{L2}) = \mbox{var}(\hat{\beta }_{L4}) + \mbox{var}(\hat{\beta }_{L2}) - 2 \mbox{cov}(\hat{\beta }_{L4}, \hat{\beta }_{L2})\]</span> We showed how to estimate  using:</p>
+<pre><code>X &lt;- model.matrix(~ type + leg, data=spider)
+Sigma.hat &lt;- sum(fitTL$residuals^2)/(nrow(X) - ncol(X)) * solve(t(X) %*% X)</code></pre>
+<p>Using the estimate of <span class="math inline">\(\Sigma\)</span>, what is your estimate of <span class="math inline">\(\mbox{cov}(\hat{\beta}_{L4}, \hat{\beta}_{L2})\)</span> ? Our contrast matrix for the desired comparison is:</p>
+<pre class="r"><code> C &lt;- matrix(c(0,0,-1,0,1),1,5)</code></pre>
+</div>
+<div id="problem-4-1" class="section level4">
+<h4>Problem 4</h4>
+<p>Suppose that we notice that the within-group variances for the groups with smaller frictional coefficients are generally smaller, and so we try to apply a transformation to the frictional coefficients to make the within-group variances more constant.</p>
+<p>Add a new variable <code>log2friction</code> to the spider dataframe:</p>
+<pre><code>spider$log2friction &lt;- log2(spider$friction)</code></pre>
+<p>The Y values now look like:</p>
+<pre><code>boxplot(log2friction ~ type*leg, data=spider)</code></pre>
+<p>Run a linear model of <code>log2friction</code> with type, leg and interactions between <code>type</code> and <code>leg</code>.</p>
+<p>What is the t-statistic for the interaction of type push and leg L4? If this t-statistic is sufficiently large, we would reject the null hypothesis that the push vs. pull effect on <code>log2(friction)</code> is the same in L4 as in L1.</p>
+</div>
+<div id="problem-5" class="section level4">
+<h4>Problem 5</h4>
+<p>Using the same analysis of log2 transformed data, What is the F-value for all of the <code>type:leg</code> interaction terms in an ANOVA? If this value is sufficiently large, we would reject the null hypothesis that the push vs. pull effect on <code>log2(friction)</code> is the same for all leg pairs.</p>
+</div>
+<div id="problem-6" class="section level4">
+<h4>Problem 6</h4>
+<p>What is the L2 vs. L1 estimate in <code>log2(friction)</code> for the pull samples?</p>
+</div>
+<div id="problem-7" class="section level4">
+<h4>Problem 7</h4>
+<p>What is the L2 vs. L1 estimate in <code>log2(friction)</code> for the push samples? Remember, because of the interaction terms, this is not the same as the L2 vs L1 difference for the pull samples. If you’re not sure use the <code>contrast</code> function. Another hint: consider the arrows plot for the model with interactions.</p>
+</div>
 </div>
 <div id="collinearity-exercises" class="section level3">
 <h3>Collinearity exercises</h3>
-<div id="problem-1-3" class="section level4">
+<div id="problem-1-4" class="section level4">
 <h4>Problem 1:</h4>
 <p>Consider these design matrices:</p>
 <p><span class="math display">\[A=\begin{pmatrix}
@@ -517,7 +591,7 @@ F=\begin{pmatrix}
 \end{pmatrix}\]</span></p>
 <p>Which of the above design matrices does NOT have the problem of collinearity?</p>
 </div>
-<div id="problem-2-2" class="section level4">
+<div id="problem-2-3" class="section level4">
 <h4>Problem 2:</h4>
 <p>The following exercises are advanced. Let’s use the example from the lecture to visualize how there is not a single best <span class="math inline">\(\hat{\beta}\)</span>, when the design matrix has collinearity of columns. An example can be made with:</p>
 <pre class="r"><code>sex &lt;- factor(rep(c(&quot;female&quot;,&quot;male&quot;),each=4))
@@ -543,7 +617,7 @@ trt &lt;- factor(c(&quot;A&quot;,&quot;A&quot;,&quot;B&quot;,&quot;B&quot;,&quot
  }</code></pre>
 <p>What is the sum of squared residuals when the male coefficient is 1 and the D coefficient is 2, and the other coefficients are fit using the linear model solution?</p>
 </div>
-<div id="problem-3-1" class="section level4">
+<div id="problem-3-2" class="section level4">
 <h4>Problem 3:</h4>
 <p>We can apply our function fitTheRest to a grid of values for <span class="math inline">\(\beta_{male}\)</span> and <span class="math inline">\(\beta_D\)</span>, using the outer function in R. outer takes three arguments: a grid of values for the first argument, a grid of values for the second argument, and finally a function which takes two arguments.</p>
 <p>Try it out:</p>
