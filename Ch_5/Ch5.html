@@ -348,6 +348,69 @@ $(document).ready(function () {
 ##  yaml          2.1.19  2018-05-01 CRAN (R 3.5.0)</code></pre>
 <div id="linear-models-and-randomness" class="section level3">
 <h3>Linear models and randomness</h3>
+<p>The standard error of an estimate is the standard deviation of the sampling distribution of an estimate. In previous chapters, we saw that our estimate of the mean of a population changed depending on the sample that we took from the population. If we repeatedly sampled from the population and each time estimated the mean, the collection of mean estimates would form the sampling distribution of the estimate. When we took the standard deviation of those estimates, that was the standard error of our mean estimate.</p>
+<p>In the case of a linear model written as:</p>
+<p><span class="math display">\[ Y_i = \beta_0 + \beta_1 X_i + \varepsilon_i, i=1,\dots,n\]</span></p>
+<p><span class="math inline">\(\varepsilon\)</span> is considered random. Every time we re-run the experiment, we will see different <span class="math inline">\(\varepsilon\)</span> dichotomous. This implies that in different application <span class="math inline">\(\varepsilon\)</span> represents different things: measurement error or variability between individuals for example.</p>
+<p>If we were to re-run the experiment many times and estimate linear model terms <span class="math inline">\(\hat{\beta}\)</span> each time, the distribution of these <span class="math inline">\(\hat{\beta}\)</span> is called the sampling distribution of the estimates. If we take the standard deviation of all of these estimates from repetitions of the experiment, this is called the standard error of the estimate. While we are not necesarily sampling individuals, you can think about the repetition of the experiment as “sampling” new errors in our observation of <span class="math inline">\(Y\)</span>.</p>
+<div id="problem-1" class="section level4">
+<h4>Problem 1</h4>
+<p>We have shown how to find the least squares estimates with matrix algebra. These estimates are random variables as they are linear combinations of the data. For these estimates to be useful, we also need to compute the standard errors. Here we review standard errors in the context of linear models. To see this, we can run a Monte Carlo simulation to imitate the collection of falling object data. Specifically, we will generate the data repeatedly and compute the estimate for the quadratic term each time.</p>
+<pre><code>g = 9.8 
+h0 = 56.67
+v0 = 0
+n = 25
+tt = seq(0,3.4,len=n) 
+y = h0 + v0 *tt - 0.5* g*tt^2 + rnorm(n,sd=1)</code></pre>
+<p>Now we act as if we didn’t know <code>h0</code>, <code>v0</code> and <code>-0.5*g</code> and use regression to estimate these. We can rewrite the model as <span class="math inline">\(y = \beta_0 + \beta_1 t + \beta_2 t^2 + \varepsilon\)</span> and obtain the LSE we have used in this class. Note that <span class="math inline">\(g = -2 \beta_2\)</span>. To obtain the LSE in R we could write:</p>
+<pre><code>X = cbind(1,tt,tt^2)
+A = solve(crossprod(X))%*%t(X)</code></pre>
+<p>Given how we have defined A, which of the following is the LSE of g, the acceleration due to gravity? Hint: try the code in R.</p>
+<ol style="list-style-type: upper-alpha">
+<li><code>9.8</code></li>
+<li><code>A %*% y</code></li>
+<li><code>-2 * (A %*% y) [3]</code></li>
+<li><code>A[3,3]</code></li>
+</ol>
+</div>
+<div id="problem-2" class="section level4">
+<h4>Problem 2</h4>
+<p>In the lines of code above, the function <code>rnorm</code> introduced randomness. This means that each time the lines of code above are repeated, the estimate of g will be different.</p>
+<p>Use the code above in conjunction with the function <code>replicate</code> to generate 100,000 Monte Carlo simulated datasets. For each dataset, compute an estimate of g. (Remember to multiply by -2.)</p>
+<p>What is the standard error of this estimate?</p>
+</div>
+<div id="problem-3" class="section level4">
+<h4>Problem 3</h4>
+<p>In the father and son height examples, we have randomness because we have a random sample of father and son pairs. For the sake of illustration, let’s assume that this is the entire population:</p>
+<pre><code>library(UsingR)
+x = father.son$fheight
+y = father.son$sheight
+n = length(y)</code></pre>
+<p>Now let’s run a Monte Carlo simulation in which we take a sample of size 50 over and over again. Here is how we obtain one sample:</p>
+<pre><code>N = 50
+index = sample(n,N)
+sampledat = father.son[index,]
+x = sampledat$fheight
+y = sampledat$sheight
+betahat = lm(y~x)$coef</code></pre>
+<p>Use the function replicate to take 10,000 samples.</p>
+<p>What is the standard error of the slope estimate? That is, calculate the standard deviation of the estimate from the observed values obtained from many random samples.</p>
+</div>
+<div id="problem-4" class="section level4">
+<h4>Problem 4</h4>
+<p>Later in this chapter we will introduce a new concept: covariance. The covariance of two lists of numbers <span class="math inline">\(X=x_1,...,x_n\)</span> and <span class="math inline">\(Y=y_1,...,y_n\)</span> is:</p>
+<pre><code>n &lt;- 100
+Y &lt;- rnorm(n)
+X &lt;- rnorm(n)
+mean( (Y - mean(Y))*(X-mean(X) ) )</code></pre>
+<p>Which of the following is closest to the covariance between father heights and son heights?</p>
+<ol style="list-style-type: upper-alpha">
+<li>0</li>
+<li>-4</li>
+<li>4</li>
+<li>0.5</li>
+</ol>
+</div>
 </div>
 <div id="expressing-design-formula-exercises" class="section level3">
 <h3>Expressing Design Formula Exercises</h3>
@@ -355,7 +418,7 @@ $(document).ready(function () {
 <p>condition/day A B C</p>
 <p>treatment 2 2 2</p>
 <p>control 2 2 2</p>
-<div id="problem-1" class="section level4">
+<div id="problem-1-1" class="section level4">
 <h4>Problem 1</h4>
 <p>Given the factors we have defined above and without defining any new ones, which of the following R formula will produce a design matrix (model matrix) that lets us analyze the effect of condition, controlling for the different days?</p>
 <ol style="list-style-type: upper-alpha">
@@ -378,13 +441,13 @@ $(document).ready(function () {
 \frac{  \sum_{i=1}^{N_x} (X_i - \mu_x)^2  + \sum_{i=1} (Y_i - \mu_y)^2  }{N_x + N_y - 2}\]</span> Here <span class="math inline">\(N_x\)</span> is the number of samples in the first group and <span class="math inline">\(N_y\)</span> is the number of samples in the second group.</p>
 <p>If we look carefully, the second part of this equation is the sum of squared residuals, divided by <span class="math inline">\(N - 2\)</span>.</p>
 <p>All that is left to show is that the entry in the second row, second column of <span class="math inline">\((X^\top X)^{-1}\)</span> is <span class="math inline">\((1/N_x + 1/N_y)\)</span></p>
-<div id="problem-1-1" class="section level4">
+<div id="problem-1-2" class="section level4">
 <h4>Problem 1</h4>
 <p>You can make a design matrix <span class="math inline">\(X\)</span> for a two group comparison, either using <code>model.matrix</code> or simply with:</p>
 <pre><code>X &lt;- cbind(rep(1,Nx + Ny),rep(c(0,1),c(Nx, Ny)))</code></pre>
 <p>In order to compare two groups, where the first group has <code>Nx=5</code> samples and the second group has <code>Ny=7</code> samples, what is the element in the 1st row and 1st column of <span class="math inline">\(X^\top X\)</span>?</p>
 </div>
-<div id="problem-2" class="section level4">
+<div id="problem-2-1" class="section level4">
 <h4>Problem 2</h4>
 <p>The other entries of <span class="math inline">\(X^\top X\)</span> are all the same. What is this number?</p>
 <p>Now we just need to invert the matrix to obtain <span class="math inline">\((X^\top X)^{-1}\)</span>. The formula for matrix inversion for a 2x2 matrix is actually relatively easy to memorize:</p>
@@ -409,7 +472,7 @@ d&amp;-b\\
 </div>
 <div id="collinearity-exercises" class="section level3">
 <h3>Collinearity exercises</h3>
-<div id="problem-1-2" class="section level4">
+<div id="problem-1-3" class="section level4">
 <h4>Problem 1:</h4>
 <p>Consider these design matrices:</p>
 <p><span class="math display">\[A=\begin{pmatrix}
@@ -454,7 +517,7 @@ F=\begin{pmatrix}
 \end{pmatrix}\]</span></p>
 <p>Which of the above design matrices does NOT have the problem of collinearity?</p>
 </div>
-<div id="problem-2-1" class="section level4">
+<div id="problem-2-2" class="section level4">
 <h4>Problem 2:</h4>
 <p>The following exercises are advanced. Let’s use the example from the lecture to visualize how there is not a single best <span class="math inline">\(\hat{\beta}\)</span>, when the design matrix has collinearity of columns. An example can be made with:</p>
 <pre class="r"><code>sex &lt;- factor(rep(c(&quot;female&quot;,&quot;male&quot;),each=4))
@@ -480,7 +543,7 @@ trt &lt;- factor(c(&quot;A&quot;,&quot;A&quot;,&quot;B&quot;,&quot;B&quot;,&quot
  }</code></pre>
 <p>What is the sum of squared residuals when the male coefficient is 1 and the D coefficient is 2, and the other coefficients are fit using the linear model solution?</p>
 </div>
-<div id="problem-3" class="section level4">
+<div id="problem-3-1" class="section level4">
 <h4>Problem 3:</h4>
 <p>We can apply our function fitTheRest to a grid of values for <span class="math inline">\(\beta_{male}\)</span> and <span class="math inline">\(\beta_D\)</span>, using the outer function in R. outer takes three arguments: a grid of values for the first argument, a grid of values for the second argument, and finally a function which takes two arguments.</p>
 <p>Try it out:</p>
