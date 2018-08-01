@@ -90,8 +90,8 @@ rnorm(10)
 ```
 
 ```
-##  [1]  1.0750610 -0.9333051 -0.8994620  1.7992412  1.1340068  0.5025653
-##  [7] -0.6708234  2.3959160 -1.1096775  0.5045432
+##  [1] -0.39332818 -0.04982202  0.54533785  0.41746633  0.20057105
+##  [6] -1.54009437  0.57157674  0.82414974  0.59803767 -0.49778758
 ```
 You can turn vectors into matrices using functions such as rbind, cbind or matrix.
 
@@ -101,6 +101,7 @@ Create the matrix from the vector 1:1000 like this:
 X = matrix(1:1000,100,10)
 ```
 What is the entry in row 25, column 3?
+
 #### Problem 2
 Using the function cbind, create a 10 x 5 matrix with first column `x=1:10`. Then add `2*x`, `3*x`, `4*x` and `5*x` to columns 2 through 5. What is the sum of the elements of the 7th row?
 
@@ -154,6 +155,7 @@ What is the sum of the elements in the resulting vector?
 
 ### Matrix algebra examples exercises
 
+#### Problem 1
 Suppose we are analyzing a set of 4 samples. The first two samples are from a treatment group A and the second two samples are from a treatment group B. This design can be represented with a model matrix like so:
 
 ```r
