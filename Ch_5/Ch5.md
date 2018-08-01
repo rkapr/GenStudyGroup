@@ -32,7 +32,7 @@ Code for this page was tested in R version 3.5.1. Check RMarkdown file for list 
 ##  yaml          2.1.19  2018-05-01 CRAN (R 3.5.0)
 ```
 
-### Linear models and randomness
+### Linear Models Introduction Exercises
 The standard error of an estimate is the standard deviation of the sampling distribution of an estimate. In previous chapters, we saw that our estimate of the mean of a population changed depending on the sample that we took from the population. If we repeatedly sampled from the population and each time estimated the mean, the collection of mean estimates would form the sampling distribution of the estimate. When we took the standard deviation of those estimates, that was the standard error of our mean estimate.
 
 In the case of a linear model written as:
@@ -232,7 +232,7 @@ Notice that the standard error estimate is also printed in the second column of:
 summary(fit)
 ```
 
-### Interactions and Contrasts
+### Interactions and Contrasts Exercises
 
 #### Basic installation and setup
 Suppose we have an experiment with two species A and B, and two conditions, control and treated.
