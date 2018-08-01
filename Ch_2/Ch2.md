@@ -33,7 +33,8 @@ Code for this page was tested in R version 3.5.1. Check RMarkdown file for list 
 ```
 
 #### Problem 1
-![](Ch2_files/exercise1.png)<!-- -->
+<img src="Ch2_files/exercise1.png" style="display: block; margin: auto;" />
+
 Given the above histogram, how many people are between the ages of 35 and 45?
 
 #### Problem 2

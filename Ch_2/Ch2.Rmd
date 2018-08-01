@@ -21,9 +21,10 @@ sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
 ```
 
 #### Problem 1
-```{r pressure, echo=FALSE}
+```{r pressure, echo=FALSE, fig.align="center"}
 knitr::include_graphics("Ch2_files/exercise1.png")
 ```
+
 Given the above histogram, how many people are between the ages of 35 and 45?
 
 #### Problem 2
