@@ -1137,6 +1137,58 @@ sapply(c(30,60,90,120), function(N) find_mean(N))</code></pre>
 </div>
 <div id="monte-carlo-exercises" class="section level3">
 <h3>Monte carlo exercises</h3>
+<div id="problem-1-5" class="section level4">
+<h4>Problem 1</h4>
+<p>Imagine you are William_Sealy_Gosset and have just mathematically derived the distribution of the t-statistic when the sample comes from a normal distribution. Unlike Gosset you have access to computers and can use them to check the results.</p>
+<p>Let’s start by creating an outcome. Set the seed at 1, use rnorm to generate a random sample of size 5, <span class="math inline">\(X_1, \dots, X_5\)</span> from a standard normal distribution, then compute the t-statistic <span class="math inline">\(t = \sqrt{5} \, \bar{X} / s\)</span> with <span class="math inline">\(s\)</span> the sample standard deviation. What value do you observe?</p>
+</div>
+<div id="problem-2-5" class="section level4">
+<h4>Problem 2</h4>
+<p>You have just performed a Monte Carlo simulation using rnorm , a random number generator for normally distributed data. Gosset’s mathematical calculation tells us that this random variable follows a t-distribution with N-1 degrees of freedom. Monte Carlo simulations can be used to check the theory: we generate many outcomes and compare them to the theoretical result. Set the seed to 1, generate B=1000 t-statistics as done in exercise 1. What percent are larger than 2?</p>
+</div>
+<div id="problem-3-5" class="section level4">
+<h4>Problem 3</h4>
+<p>The answer to exercise 2 is very similar to the theoretical prediction: <code>1-pt(2,df=4)</code>. We can check several such quantiles using the <code>qqplot</code> function.</p>
+<p>To obtain quantiles for the t-distribution we can generate percentiles from just above 0 to just below 1: <code>B=100; ps = seq(1/(B+1), 1-1/(B+1),len=B)</code> and compute the quantiles with <code>qt(ps,df=4)</code>. Now we can use qqplot to compare these theoretical quantiles to those obtained in the Monte Carlo simulation. Use Monte Carlo simulation developed for exercise 2 to corroborate that the t-statistic <span class="math inline">\(t = \sqrt{N} \, \bar{X} / s\)</span> follows a t-distribution for several values of N.</p>
+<p>For which sample sizes does the approximation best work?</p>
+<ol style="list-style-type: upper-alpha">
+<li>Larger sample sizes.</li>
+<li>Smaller sample sizes.</li>
+<li>The approximations are spot on for all sample sizes.</li>
+<li>None. We should use CLT instead.</li>
+</ol>
+</div>
+<div id="problem-4-5" class="section level4">
+<h4>Problem 4</h4>
+<p>Use Monte Carlo simulation to corroborate that the t-statistic comparing two means and obtained with normally distributed (mean 0 and sd) data follows a t-distribution. In this case we will use the <code>t.test</code> function with <code>var.equal=TRUE</code>. With this argument the degrees of freedom will be <code>df=2*N-2</code> with <code>N</code> the sample size. For which sample sizes does the approximation best work?</p>
+<ol style="list-style-type: upper-alpha">
+<li>Larger sample sizes.</li>
+<li>Smaller sample sizes.</li>
+<li>The approximations are spot on for all sample sizes.</li>
+<li>None. We should use CLT instead.</li>
+</ol>
+</div>
+<div id="problem-5-5" class="section level4">
+<h4>Problem 5</h4>
+<p>Is the following statement true or false? If instead of generating the sample with <code>X=rnorm(15)</code>, we generate it with binary data <code>X=rbinom(n=15,size=1,prob=0.5)</code> then the t-statistic</p>
+<pre><code>tstat &lt;- sqrt(15)*mean(X) / sd(X)</code></pre>
+<p>is approximated by a t-distribution with 14 degrees of freedom.</p>
+</div>
+<div id="problem-6-5" class="section level4">
+<h4>Problem 6</h4>
+<p>Is the following statement true or false? If instead of generating the sample with X=rnorm(N) with N=500, we generate the data with binary data X=rbinom(n=500,size=1,prob=0.5), then the t-statistic sqrt(N)*mean(X)/sd(X) is approximated by a t-distribution with 499 degrees of freedom.</p>
+</div>
+<div id="problem-7-5" class="section level4">
+<h4>Problem 7</h4>
+<p>We can derive approximation of the distribution of the sample average or the t-statistic theoretically. However, suppose we are interested in the distribution of a statistic for which a theoretical approximation is not immediately obvious.</p>
+<p>Consider the sample median as an example. Use a Monte Carlo to determine which of the following best approximates the median of a sample taken from normally distributed population with mean 0 and standard deviation 1.</p>
+<ol style="list-style-type: upper-alpha">
+<li>Just like for the average, the sample median is approximately normal with mean 0 and SD <span class="math inline">\(1/\sqrt{N}\)</span>.</li>
+<li>The sample median is not approximately normal.</li>
+<li>The sample median is t-distributed for small samples and normally distributed for large ones.</li>
+<li>The sample median is approximately normal with mean 0 and SD larger than <span class="math inline">\(1 / \sqrt{N}\)</span>.</li>
+</ol>
+</div>
 </div>
 <div id="permutation-tests-exercises" class="section level3">
 <h3>Permutation tests exercises</h3>
@@ -1150,7 +1202,7 @@ library(dplyr)
 bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
 bwt.smoke &lt;- filter(babies, smoke==1) %&gt;% select(bwt) %&gt;% unlist</code></pre>
 </div>
-<div id="problem-1-5" class="section level4">
+<div id="problem-1-6" class="section level4">
 <h4>Problem 1</h4>
 <p>We will generate the following random variable based on a sample size of 10 and observe the following difference:</p>
 <pre class="r"><code>N=10
@@ -1177,7 +1229,7 @@ p = (sum(abs(avgdiff) &gt; abs(obs)) + 1) / (length(avgdiff) + 1)
 p</code></pre>
 <pre><code>## [1] 0.05394605</code></pre>
 </div>
-<div id="problem-2-5" class="section level4">
+<div id="problem-2-6" class="section level4">
 <h4>Problem 2</h4>
 <p>Repeat the above exercise, but instead of the differences in mean, consider the differences in median <code>obs &lt;- median(smokers) - median(nonsmokers)</code>. What is the permutation based p-value?</p>
 <pre class="r"><code>obs &lt;- median(smokers) - median(nonsmokers)
@@ -1203,7 +1255,7 @@ filename &lt;- basename(url)
 download(url, destfile=filename)
 dat &lt;- read.csv(filename)</code></pre>
 </div>
-<div id="problem-1-6" class="section level4">
+<div id="problem-1-7" class="section level4">
 <h4>Problem 1</h4>
 <p>This dataframe reflects the allele status (either AA/Aa or aa) and the case/control status for 72 individuals. Compute the Chi-square test for the association of genotype with case/control status (using the table function and the chisq.test function). Examine the table to see if there appears to be an association. What is the X-squared statistic?</p>
 <pre class="r"><code>head(dat)</code></pre>
@@ -1258,7 +1310,7 @@ expected</code></pre>
 ##  3.343653</code></pre>
 <pre><code>## [1] &quot;Since p-value is not significant, there is not much difference in case/control status due to allele.&quot;</code></pre>
 </div>
-<div id="problem-2-6" class="section level4">
+<div id="problem-2-7" class="section level4">
 <h4>Problem 2</h4>
 <p>Compute Fisher’s exact test fisher.test for the same table. What is the p-value?</p>
 <pre class="r"><code>fisher.test(tab)</code></pre>
