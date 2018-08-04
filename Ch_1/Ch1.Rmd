@@ -681,9 +681,9 @@ N <- 5
 dat.ns <- sample(bwt.nonsmoke,N)
 dat.s <- sample(bwt.smoke,N)
 
-sigma.s <- sd(dat.s)
-sigma.ns <- sd(dat.ns)
-sXY <- sqrt(sigma.s/N+sigma.ns/N)
+var.s <- var(dat.s)
+var.ns <- var(dat.ns)
+sXY <- sqrt(var.s/N+var.ns/N)
 meanXY <- mean(dat.ns) - mean(dat.s)
 tval <- meanXY/sXY
 tval

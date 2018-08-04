@@ -975,13 +975,13 @@ N &lt;- 5
 dat.ns &lt;- sample(bwt.nonsmoke,N)
 dat.s &lt;- sample(bwt.smoke,N)
 
-sigma.s &lt;- sd(dat.s)
-sigma.ns &lt;- sd(dat.ns)
-sXY &lt;- sqrt(sigma.s/N+sigma.ns/N)
+var.s &lt;- var(dat.s)
+var.ns &lt;- var(dat.ns)
+sXY &lt;- sqrt(var.s/N+var.ns/N)
 meanXY &lt;- mean(dat.ns) - mean(dat.s)
 tval &lt;- meanXY/sXY
 tval</code></pre>
-<pre><code>## [1] 8.887958</code></pre>
+<pre><code>## [1] 1.828297</code></pre>
 </div>
 <div id="problem-2-4" class="section level4">
 <h4>Problem 2</h4>
@@ -990,7 +990,7 @@ tval</code></pre>
 <p>We have computed these by taking one minus the area under the standard normal curve between <code>-abs(tval)</code> and <code>abs(tval)</code>. In R, we can do this by using the <code>pnorm</code> function, which computes the area under a normal curve from negative infinity up to the value given as its first argument:</p>
 <pre class="r"><code>pval &lt;- 2*pnorm(-tval)
 pval</code></pre>
-<pre><code>## [1] 6.224195e-19</code></pre>
+<pre><code>## [1] 0.06750498</code></pre>
 </div>
 <div id="problem-3-4" class="section level4">
 <h4>Problem 3</h4>
