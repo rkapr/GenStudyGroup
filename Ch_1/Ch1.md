@@ -897,26 +897,26 @@ sd(X)
 Use the CLT to approximate the probability that our estimate $\bar{X}$ is off by more than 5.21 ounces from $\mu_X$.
 
 ```r
-norm_rv <- 5.21/sd(X)
+norm_rv <- sqrt(12)*5.21/sd(X)
 2*pnorm(-norm_rv, 0, 1)
 ```
 
 ```
-## [1] 0.08475922
+## [1] 2.356222e-09
 ```
 
 #### Problem 8
 Now we introduce the concept of a null hypothesis. We don’t know $\mu_X$ nor $\mu_Y$. We want to quantify what the data say about the possibility that the diet has no effect: $\mu_X=\mu_Y$. If we use CLT, then we approximate the distribution of $\bar{X}$ as normal with mean $\mu_X$ and standard deviation $\sigma_X$ and the distribution of $\bar{Y}$ as normal with mean $\mu_Y$ and standard deviation $\sigma_Y$. This implies that the difference $\bar{Y}-\bar{X}$ has mean 0. We described that the standard deviation of this statistic (the standard error) is $SE(\bar{X}-\bar{Y})=\sqrt{\sigma_Y^2/12+\sigma_X^2/12}$ and that we estimate the population standard deviations $\sigma_X$ and $\sigma_Y$ with the sample estimates. What is the estimate of $SE(\bar{X}-\bar{Y})=\sqrt{\sigma_Y^2/12+\sigma_X^2/12}$?
 
 ```r
-sigmaX <- sd(X)
-sigmaY <- sd(Y)
-sXY <- sqrt(sigmaX/12+sigmaY/12)
+varX <- var(X)
+varY <- var(Y)
+sXY <- sqrt(varX/12+varY/12)
 sXY
 ```
 
 ```
-## [1] 0.7702892
+## [1] 1.469867
 ```
 
 #### Problem 9
@@ -929,7 +929,7 @@ tstat
 ```
 
 ```
-## [1] 3.921687
+## [1] 2.055174
 ```
 #### Problem 10
 If we apply the CLT, what is the distribution of this t-statistic?
@@ -952,7 +952,7 @@ Now we are ready to compute a p-value using the CLT. What is the probability of 
 ```
 
 ```
-## [1] 8.793116e-05
+## [1] 0.0398622
 ```
 
 #### Problem 12
@@ -1015,6 +1015,7 @@ D) Neither assumption is useful. Both are wrong.
 For these exercises we will load the babies dataset from babies.txt. We will use this data to review the concepts behind the p-values and then test confidence interval concepts.
 
 ```r
+library(downloader)
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt"
 filename <- basename(url)
 download(url, destfile=filename)
@@ -1025,6 +1026,7 @@ This is a large dataset (1,236 cases), and we will pretend that it contains the 
 First, let’s split this into two birth weight datasets: one of birth weights to non-smoking mothers and the other of birth weights to smoking mothers.
 
 ```r
+library(dplyr)
 bwt.nonsmoke <- filter(babies, smoke==0) %>% select(bwt) %>% unlist 
 bwt.smoke <- filter(babies, smoke==1) %>% select(bwt) %>% unlist
 ```
@@ -1063,12 +1065,40 @@ We are interested in testing whether the birth weights of babies born to non-smo
 #### Problem 1
 Set the seed at 1 and obtain two samples, each of size `N=25`, from non-smoking mothers (`dat.ns`) and smoking mothers (`dat.s`). Compute the t-statistic (call it `tval`).
 
+```r
+set.seed(1)
+N <- 5
+dat.ns <- sample(bwt.nonsmoke,N)
+dat.s <- sample(bwt.smoke,N)
+
+sigma.s <- sd(dat.s)
+sigma.ns <- sd(dat.ns)
+sXY <- sqrt(sigma.s/N+sigma.ns/N)
+meanXY <- mean(dat.ns) - mean(dat.s)
+tval <- meanXY/sXY
+tval
+```
+
+```
+## [1] 8.887958
+```
+
+
 #### Problem 2
 Recall that we summarize our data using a t-statistics because we know that in situations where the null hypothesis is true (what we mean when we say “under the null”) and the sample size is relatively large, this t-value will have an approximate standard normal distribution. Because we know the distribution of the t-value under the null, we can quantitatively determine how unusual the observed t-value would be if the null hypothesis were true.
 
 The standard procedure is to examine the probability a t-statistic that actually does follow the null hypothesis would have larger absolute value than the absolute value of the t-value we just observed – this is called a two-sided test.
 
 We have computed these by taking one minus the area under the standard normal curve between `-abs(tval)` and `abs(tval)`. In R, we can do this by using the `pnorm` function, which computes the area under a normal curve from negative infinity up to the value given as its first argument:
+
+```r
+pval <- 2*pnorm(-tval)
+pval
+```
+
+```
+## [1] 6.224195e-19
+```
 
 #### Problem 3
 Because of the symmetry of the standard normal distribution, there is a simpler way to calculate the probability that a t-value under the null could have a larger absolute value than tval. Choose the simplified calculation from the following:
@@ -1077,6 +1107,10 @@ A) `1-2*pnorm(abs(tval))`
 B) `1-2*pnorm(-abs(tval))`
 C) `1-pnorm(-abs(tval))`
 D) `2*pnorm(-abs(tval))`
+
+```
+## [1] "D."
+```
 
 #### Problem 4
 By reporting only p-values, many scientific publications provide an incomplete story of their findings. As we have mentioned, with very large sample sizes, scientifically insignificant differences between two groups can lead to small p-values. Confidence intervals are more informative as they include the estimate itself. Our estimate of the difference between babies of smoker and non-smokers: `mean(dat.s) - mean( dat.ns)`. If we use the CLT, what quantity would we add and subtract to this estimate to obtain a 99% confidence interval?
