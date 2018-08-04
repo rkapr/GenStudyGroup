@@ -756,6 +756,11 @@ B) The following is the another way to describe a *Type I* error: due to random 
 C) From the original data alone, you can tell whether you have made a *Type I* error.
 D) In scientific practice, a *Type I* error constitutes reporting a “significant” result when there is actually no result.
 
+```{r echo=FALSE}
+print("?")
+```
+
+
 #### Problem 8
 In the simulation we have set up here, we know the null hypothesis is false – the true value of difference in means is actually around 8.9. Thus, we are concerned with how often the decision rule outlined in the last section allows us to conclude that the null hypothesis is actually false. In other words, we would like to quantify the *Type II* error rate of the test, or the probability that we fail to reject the null hypothesis when the alternative hypothesis is true.
 
@@ -768,6 +773,14 @@ There are several aspects of a hypothesis test that affect its power for a parti
 We can explore the trade off of power and *Type I* error concretely using the babies data. Since we have the full population, we know what the true effect size is (about 8.93) and we can compute the power of the test for true difference between populations.
 
 Set the seed at 1 and take a random sample of $N=5$ measurements from each of the smoking and nonsmoking datasets. What is the p-value (use the `t.test` function)?
+```{r}
+set.seed(1)
+N <- 5
+dat.ns <- sample(bwt.nonsmoke,N)
+dat.s <- sample(bwt.smoke,N)
+t.test(dat.ns,dat.s)
+t.test(dat.ns,dat.s)$p.val
+```
 
 #### Problem 9
 The p-value is larger than 0.05 so using the typical cut-off, we would not reject. This is a *Type II* error. Which of the following is __not__ a way to decrease this type of error?
@@ -776,16 +789,60 @@ A) Increase our chance of a *Type I* error.
 B) Take a larger sample size.
 C) Find a population for which the null is not true.
 D) Use a higher $\alpha$ level.
+```{r echo=FALSE}
+print("C.")
+```
 
 #### Problem 10
 Set the seed at 1, then use the `replicate` function to repeat the code used in exercise 9 10,000 times. What proportion of the time do we reject at the 0.05 level?
+```{r}
+set.seed(1)
+N <- 5
+alpha <- 0.05
+rejections <- replicate(10000, {
+  dat.ns <- sample(bwt.nonsmoke,N)
+  dat.s <- sample(bwt.smoke,N)
+  pval <- t.test(dat.ns,dat.s)$p.val
+  pval < alpha
+})
+mean(rejections)
+```
 
 #### Problem 11
 Note that, not surprisingly, the power is lower than 10%. Repeat the exercise above for samples sizes of 30, 60, 90 and 120. Which of those four gives you power of about 80%?
+```{r}
+Ns <- c(30,60,90,120)
+alpha <- 0.05
+reject <- function(N, alpha=0.05) {
+  dat.ns <- sample(bwt.nonsmoke,N)
+  dat.s <- sample(bwt.smoke,N)
+  pval <- t.test(dat.ns,dat.s)$p.val
+  pval < alpha
+}
+find_mean <- function(N, Niter=10000, alpha=0.05){
+  set.seed(1)
+  rejections <- replicate(Niter, reject(N, alpha))
+  mean(rejections)
+}
+sapply(c(30,60,90,120), function(N) find_mean(N))
+#find_mean(N=5)
+```
+```{r echo=FALSE}
+print("sample size 60 gives power of about 80%.")
+```
 
 #### Problem 12
 Repeat problem 11, but now require an $\alpha$ level of 0.01. Which of those four gives you power of about 80%?
+```{r}
+sapply(c(30,60,90,120), function(N) find_mean(N, alpha=0.01))
+```
+```{r echo=FALSE}
+print("sample size 90 gives power of about 80%.")
+```
 
+```{r echo=FALSE}
+rm(list = ls())
+```
 ### Monte carlo exercises
 
 ### Permutation tests exercises

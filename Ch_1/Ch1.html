@@ -1051,6 +1051,7 @@ t.test(dat.ns,dat.s,conf.level = 0.99)$conf.int</code></pre>
 <li>From the original data alone, you can tell whether you have made a <em>Type I</em> error.</li>
 <li>In scientific practice, a <em>Type I</em> error constitutes reporting a “significant” result when there is actually no result.</li>
 </ol>
+<pre><code>## [1] &quot;?&quot;</code></pre>
 </div>
 <div id="problem-8-4" class="section level4">
 <h4>Problem 8</h4>
@@ -1060,6 +1061,24 @@ t.test(dat.ns,dat.s,conf.level = 0.99)$conf.int</code></pre>
 <p>There are several aspects of a hypothesis test that affect its power for a particular effect size. Intuitively, setting a lower <span class="math inline">\(\alpha\)</span> decreases the power of the test for a given effect size because the null hypothesis will be more difficult to reject. This means that for an experiment with fixed parameters (i.e., with a predetermined sample size, recording mechanism, etc), the power of the hypothesis test trades off with its <em>Type I</em> error rate, no matter what effect size you target.</p>
 <p>We can explore the trade off of power and <em>Type I</em> error concretely using the babies data. Since we have the full population, we know what the true effect size is (about 8.93) and we can compute the power of the test for true difference between populations.</p>
 <p>Set the seed at 1 and take a random sample of <span class="math inline">\(N=5\)</span> measurements from each of the smoking and nonsmoking datasets. What is the p-value (use the <code>t.test</code> function)?</p>
+<pre class="r"><code>set.seed(1)
+N &lt;- 5
+dat.ns &lt;- sample(bwt.nonsmoke,N)
+dat.s &lt;- sample(bwt.smoke,N)
+t.test(dat.ns,dat.s)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  dat.ns and dat.s
+## t = 1.8283, df = 4.2904, p-value = 0.1366
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -10.82313  56.02313
+## sample estimates:
+## mean of x mean of y 
+##     130.4     107.8</code></pre>
+<pre class="r"><code>t.test(dat.ns,dat.s)$p.val</code></pre>
+<pre><code>## [1] 0.1366428</code></pre>
 </div>
 <div id="problem-9-4" class="section level4">
 <h4>Problem 9</h4>
@@ -1070,18 +1089,50 @@ t.test(dat.ns,dat.s,conf.level = 0.99)$conf.int</code></pre>
 <li>Find a population for which the null is not true.</li>
 <li>Use a higher <span class="math inline">\(\alpha\)</span> level.</li>
 </ol>
+<pre><code>## [1] &quot;C.&quot;</code></pre>
 </div>
 <div id="problem-10-3" class="section level4">
 <h4>Problem 10</h4>
 <p>Set the seed at 1, then use the <code>replicate</code> function to repeat the code used in exercise 9 10,000 times. What proportion of the time do we reject at the 0.05 level?</p>
+<pre class="r"><code>set.seed(1)
+N &lt;- 5
+alpha &lt;- 0.05
+rejections &lt;- replicate(10000, {
+  dat.ns &lt;- sample(bwt.nonsmoke,N)
+  dat.s &lt;- sample(bwt.smoke,N)
+  pval &lt;- t.test(dat.ns,dat.s)$p.val
+  pval &lt; alpha
+})
+mean(rejections)</code></pre>
+<pre><code>## [1] 0.0984</code></pre>
 </div>
 <div id="problem-11-2" class="section level4">
 <h4>Problem 11</h4>
 <p>Note that, not surprisingly, the power is lower than 10%. Repeat the exercise above for samples sizes of 30, 60, 90 and 120. Which of those four gives you power of about 80%?</p>
+<pre class="r"><code>Ns &lt;- c(30,60,90,120)
+alpha &lt;- 0.05
+reject &lt;- function(N, alpha=0.05) {
+  dat.ns &lt;- sample(bwt.nonsmoke,N)
+  dat.s &lt;- sample(bwt.smoke,N)
+  pval &lt;- t.test(dat.ns,dat.s)$p.val
+  pval &lt; alpha
+}
+find_mean &lt;- function(N, Niter=10000, alpha=0.05){
+  set.seed(1)
+  rejections &lt;- replicate(Niter, reject(N, alpha))
+  mean(rejections)
+}
+sapply(c(30,60,90,120), function(N) find_mean(N))</code></pre>
+<pre><code>## [1] 0.4783 0.7878 0.9338 0.9852</code></pre>
+<pre class="r"><code>#find_mean(N=5)</code></pre>
+<pre><code>## [1] &quot;sample size 60 gives power of about 80%.&quot;</code></pre>
 </div>
 <div id="problem-12-2" class="section level4">
 <h4>Problem 12</h4>
 <p>Repeat problem 11, but now require an <span class="math inline">\(\alpha\)</span> level of 0.01. Which of those four gives you power of about 80%?</p>
+<pre class="r"><code>sapply(c(30,60,90,120), function(N) find_mean(N, alpha=0.01))</code></pre>
+<pre><code>## [1] 0.2512 0.5600 0.7969 0.9233</code></pre>
+<pre><code>## [1] &quot;sample size 90 gives power of about 80%.&quot;</code></pre>
 </div>
 </div>
 <div id="monte-carlo-exercises" class="section level3">
