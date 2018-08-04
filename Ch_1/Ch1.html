@@ -971,17 +971,19 @@ mean(bwt.nonsmoke)-mean(bwt.smoke)</code></pre>
 <h4>Problem 1</h4>
 <p>Set the seed at 1 and obtain two samples, each of size <code>N=25</code>, from non-smoking mothers (<code>dat.ns</code>) and smoking mothers (<code>dat.s</code>). Compute the t-statistic (call it <code>tval</code>).</p>
 <pre class="r"><code>set.seed(1)
-N &lt;- 5
+N &lt;- 25
 dat.ns &lt;- sample(bwt.nonsmoke,N)
 dat.s &lt;- sample(bwt.smoke,N)
 
 var.s &lt;- var(dat.s)
 var.ns &lt;- var(dat.ns)
-sXY &lt;- sqrt(var.s/N+var.ns/N)
+se &lt;- sqrt(var.s/N+var.ns/N)
 meanXY &lt;- mean(dat.ns) - mean(dat.s)
-tval &lt;- meanXY/sXY
+tval &lt;- meanXY/se
 tval</code></pre>
-<pre><code>## [1] 1.828297</code></pre>
+<pre><code>## [1] 2.120904</code></pre>
+<pre class="r"><code>se</code></pre>
+<pre><code>## [1] 4.67725</code></pre>
 </div>
 <div id="problem-2-4" class="section level4">
 <h4>Problem 2</h4>
@@ -990,7 +992,7 @@ tval</code></pre>
 <p>We have computed these by taking one minus the area under the standard normal curve between <code>-abs(tval)</code> and <code>abs(tval)</code>. In R, we can do this by using the <code>pnorm</code> function, which computes the area under a normal curve from negative infinity up to the value given as its first argument:</p>
 <pre class="r"><code>pval &lt;- 2*pnorm(-tval)
 pval</code></pre>
-<pre><code>## [1] 0.06750498</code></pre>
+<pre><code>## [1] 0.03392985</code></pre>
 </div>
 <div id="problem-3-4" class="section level4">
 <h4>Problem 3</h4>
@@ -1006,10 +1008,25 @@ pval</code></pre>
 <div id="problem-4-4" class="section level4">
 <h4>Problem 4</h4>
 <p>By reporting only p-values, many scientific publications provide an incomplete story of their findings. As we have mentioned, with very large sample sizes, scientifically insignificant differences between two groups can lead to small p-values. Confidence intervals are more informative as they include the estimate itself. Our estimate of the difference between babies of smoker and non-smokers: <code>mean(dat.s) - mean( dat.ns)</code>. If we use the CLT, what quantity would we add and subtract to this estimate to obtain a 99% confidence interval?</p>
+<pre class="r"><code>interval &lt;- qnorm(1-0.01/2)*se
+interval </code></pre>
+<pre><code>## [1] 12.0478</code></pre>
+<pre class="r"><code>c(meanXY-interval,meanXY+interval)</code></pre>
+<pre><code>## [1] -2.127797 21.967797</code></pre>
 </div>
 <div id="problem-5-4" class="section level4">
 <h4>Problem 5</h4>
 <p>If instead of CLT, we use the t-distribution approximation, what do we add and subtract (use <code>2*N-2</code> degrees of freedom)?</p>
+<pre class="r"><code>t_interval &lt;- qt(1-0.01/2,df=2*N-2)*se
+t_interval </code></pre>
+<pre><code>## [1] 12.54534</code></pre>
+<pre class="r"><code>c(meanXY-t_interval,meanXY+t_interval)</code></pre>
+<pre><code>## [1] -2.625339 22.465339</code></pre>
+<pre class="r"><code># Using t.test
+t.test(dat.ns,dat.s,conf.level = 0.99)$conf.int</code></pre>
+<pre><code>## [1] -2.628663 22.468663
+## attr(,&quot;conf.level&quot;)
+## [1] 0.99</code></pre>
 </div>
 <div id="problem-6-4" class="section level4">
 <h4>Problem 6</h4>
@@ -1020,6 +1037,7 @@ pval</code></pre>
 <li>N and thus the degrees of freedom is large enough to make the normal and t-distributions very similar.</li>
 <li>They are actually quite different, differing by more than 1 ounce.</li>
 </ol>
+<pre><code>## [1] &quot;C. N and thus the degrees of freedom is large enough to make the normal and t-distributions very similar.&quot;</code></pre>
 </div>
 <div id="problem-7-4" class="section level4">
 <h4>Problem 7</h4>

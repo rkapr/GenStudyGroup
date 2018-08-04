@@ -1067,20 +1067,28 @@ Set the seed at 1 and obtain two samples, each of size `N=25`, from non-smoking 
 
 ```r
 set.seed(1)
-N <- 5
+N <- 25
 dat.ns <- sample(bwt.nonsmoke,N)
 dat.s <- sample(bwt.smoke,N)
 
 var.s <- var(dat.s)
 var.ns <- var(dat.ns)
-sXY <- sqrt(var.s/N+var.ns/N)
+se <- sqrt(var.s/N+var.ns/N)
 meanXY <- mean(dat.ns) - mean(dat.s)
-tval <- meanXY/sXY
+tval <- meanXY/se
 tval
 ```
 
 ```
-## [1] 1.828297
+## [1] 2.120904
+```
+
+```r
+se
+```
+
+```
+## [1] 4.67725
 ```
 
 
@@ -1097,7 +1105,7 @@ pval
 ```
 
 ```
-## [1] 0.06750498
+## [1] 0.03392985
 ```
 
 #### Problem 3
@@ -1115,8 +1123,53 @@ D) `2*pnorm(-abs(tval))`
 #### Problem 4
 By reporting only p-values, many scientific publications provide an incomplete story of their findings. As we have mentioned, with very large sample sizes, scientifically insignificant differences between two groups can lead to small p-values. Confidence intervals are more informative as they include the estimate itself. Our estimate of the difference between babies of smoker and non-smokers: `mean(dat.s) - mean( dat.ns)`. If we use the CLT, what quantity would we add and subtract to this estimate to obtain a 99% confidence interval?
 
+```r
+interval <- qnorm(1-0.01/2)*se
+interval 
+```
+
+```
+## [1] 12.0478
+```
+
+```r
+c(meanXY-interval,meanXY+interval)
+```
+
+```
+## [1] -2.127797 21.967797
+```
+
 #### Problem 5
 If instead of CLT, we use the t-distribution approximation, what do we add and subtract (use `2*N-2` degrees of freedom)?
+
+```r
+t_interval <- qt(1-0.01/2,df=2*N-2)*se
+t_interval 
+```
+
+```
+## [1] 12.54534
+```
+
+```r
+c(meanXY-t_interval,meanXY+t_interval)
+```
+
+```
+## [1] -2.625339 22.465339
+```
+
+```r
+# Using t.test
+t.test(dat.ns,dat.s,conf.level = 0.99)$conf.int
+```
+
+```
+## [1] -2.628663 22.468663
+## attr(,"conf.level")
+## [1] 0.99
+```
 
 #### Problem 6
 Why are the values from 4 and 5 so similar?
@@ -1125,6 +1178,10 @@ A) Coincidence.
 B) They are both related to 99% confidence intervals.
 C) N and thus the degrees of freedom is large enough to make the normal and t-distributions very similar.
 D) They are actually quite different, differing by more than 1 ounce.
+
+```
+## [1] "C. N and thus the degrees of freedom is large enough to make the normal and t-distributions very similar."
+```
 
 #### Problem 7
 No matter which way you compute it, the p-value `pval` is the probability that the null hypothesis could have generated a t-statistic more extreme than than what we observed: tval. If the p-value is very small, this means that observing a value more extreme than `tval` would be very rare if the null hypothesis were true, and would give strong evidence that we should reject the null hypothesis. We determine how small the p-value needs to be to reject the null by deciding how often we would be willing to mistakenly reject the null hypothesis.
