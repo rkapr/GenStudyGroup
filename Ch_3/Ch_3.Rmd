@@ -1,0 +1,21 @@
+---
+title: "Chapter 3"
+author: "RK"
+date: "8/4/2018"
+output:
+  html_document:
+    keep_md: yes
+    theme: united
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+```
+Code for this page was tested in R version `r getRversion()`. Check RMarkdown file for list of all packages.
+
+```{r echo=FALSE}
+# Run this at the end
+sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
+```

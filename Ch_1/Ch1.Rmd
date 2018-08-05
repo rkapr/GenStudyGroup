@@ -900,7 +900,7 @@ my_plot <- function(N, B = 100){
   })
 
   qqplot(sim_quantile, th_quantile,  xlab="Data", ylab="t quantiles",
-       main=paste("t-prob plot, df=",N-1))
+       main=paste("t-prob plot, N=",N))
   qqline(sim_quantile, datax=TRUE, distribution=function(p){qt(p, df=N-1)})
   # Ref for above two lines:  https://people.ucsc.edu/~ealdrich/Teaching/Econ114/Code/quantiles.nb.html#
 }
@@ -950,7 +950,7 @@ my_plot_binom <- function(N, B = 1000){
   })
 
   qqplot(sim_quantile, th_quantile,  xlab="Data", ylab="t quantiles",
-       main=paste("t-prob plot, df=",N-1))
+       main=paste("t-prob plot, N=",N))
   qqline(sim_quantile, datax=TRUE, distribution=function(p){qt(p, df=N-1)})
 }
 par(mfrow=c(1,1))
