@@ -355,7 +355,7 @@ $(document).ready(function () {
 <pre class="r"><code>library(downloader) 
 url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleControlsPopulation.csv&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 x &lt;- unlist( read.csv(filename) )</code></pre>
 <p>Here x represents the weights for the entire population.</p>
 </div>
@@ -474,7 +474,7 @@ pnorm(25, mean = 23.9, sd = 0.43)-pnorm(23, mean = 23.9, sd = 0.43)</code></pre>
 <pre class="r"><code>library(downloader) 
 url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat &lt;- read.csv(filename)</code></pre>
 <p>We will remove the lines that contain missing values:</p>
 <pre class="r"><code>dat &lt;- na.omit( dat )</code></pre>
@@ -586,7 +586,7 @@ abs(pop_diff - sample_diff)</code></pre>
 <pre class="r"><code>library(downloader) 
 url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat &lt;- na.omit( read.csv(filename) )</code></pre>
 </div>
 <div id="problem-1-2" class="section level4">
@@ -950,7 +950,7 @@ result$p.value</code></pre>
 <pre class="r"><code>library(downloader)
 url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 babies &lt;- read.table(&quot;babies.txt&quot;, header=TRUE)</code></pre>
 <p>This is a large dataset (1,236 cases), and we will pretend that it contains the entire population in which we are interested. We will study the differences in birth weight between babies born to smoking and non-smoking mothers.</p>
 <p>First, let’s split this into two birth weight datasets: one of birth weights to non-smoking mothers and the other of birth weights to smoking mothers.</p>
@@ -1258,7 +1258,7 @@ my_plot_binom(N=15)</code></pre>
 <h4>Basic Intallation and setup</h4>
 <pre class="r"><code>url &lt;- &quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 babies &lt;- read.table(&quot;babies.txt&quot;, header=TRUE)
 library(dplyr)
 bwt.nonsmoke &lt;- filter(babies, smoke==0) %&gt;% select(bwt) %&gt;% unlist 
@@ -1314,7 +1314,7 @@ p</code></pre>
 <pre class="r"><code>library(downloader) 
 url &lt;- &quot;https://studio.edx.org/c4x/HarvardX/PH525.1x/asset/assoctest.csv&quot;
 filename &lt;- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat &lt;- read.csv(filename)</code></pre>
 </div>
 <div id="problem-1-7" class="section level4">

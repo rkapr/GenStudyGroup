@@ -41,7 +41,7 @@ Code for this page was tested in R version 3.5.1. Check RMarkdown file for list 
 library(downloader) 
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleControlsPopulation.csv"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 x <- unlist( read.csv(filename) )
 ```
 Here x represents the weights for the entire population.
@@ -218,7 +218,7 @@ The answer to 9 and 10 were very similar. This is because we can approximate the
 library(downloader) 
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat <- read.csv(filename)
 ```
 We will remove the lines that contain missing values:
@@ -404,7 +404,7 @@ D) The sample size was smaller for females.
 library(downloader) 
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat <- na.omit( read.csv(filename) )
 ```
 
@@ -1020,7 +1020,7 @@ For these exercises we will load the babies dataset from babies.txt. We will use
 library(downloader)
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 babies <- read.table("babies.txt", header=TRUE)
 ```
 This is a large dataset (1,236 cases), and we will pretend that it contains the entire population in which we are interested. We will study the differences in birth weight between babies born to smoking and non-smoking mothers.
@@ -1492,7 +1492,7 @@ D) The sample median is approximately normal with mean 0 and SD larger than $1 /
 ```r
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/babies.txt"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 babies <- read.table("babies.txt", header=TRUE)
 library(dplyr)
 bwt.nonsmoke <- filter(babies, smoke==0) %>% select(bwt) %>% unlist 
@@ -1572,7 +1572,7 @@ p
 library(downloader) 
 url <- "https://studio.edx.org/c4x/HarvardX/PH525.1x/asset/assoctest.csv"
 filename <- basename(url)
-download(url, destfile=filename)
+if(!file.exists(filename)) download(url, destfile=filename)
 dat <- read.csv(filename)
 ```
 #### Problem 1
