@@ -159,6 +159,7 @@ c&d
 d&-b\\
 -c&a
 \end{pmatrix} $$
+
 The element of the inverse in the 2nd row and the 2nd column is the element which will be used to calculate the standard error of the second coefficient of the linear model. This is $a / (ad - bc)$. And for our two group comparison, we saw that $a = N_x + N_y$ and the $b = c = d = N_y$. So it follows that this element is:
 
 $$\frac{N_x + N_y}{(N_x + N_y) N_y - N_y N_y}$$
