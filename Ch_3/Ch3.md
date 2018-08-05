@@ -60,7 +60,7 @@ head(ChickWeight)
 plot( ChickWeight$Time, ChickWeight$weight, col=ChickWeight$Diet)
 ```
 
-![](Ch_3_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](Ch3_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 First, notice that the rows here represent time points rather than individuals. To facilitate the comparison of weights at different time points and across the different chicks, we will reshape the data so that each row is a chick. In R we can do this with the reshape function:
 
 ```r
