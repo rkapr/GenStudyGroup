@@ -1,7 +1,7 @@
 ---
 title: "Chapter 3 Robust Summaries and Rank Tests"
 author: "RK"
-date: "8/4/2018"
+date: "8/6/2018"
 output:
   html_document:
     keep_md: yes

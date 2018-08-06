@@ -15,7 +15,7 @@ rm(list = ls())
 ```
 Code for this page was tested in R version `r getRversion()`. Check RMarkdown file for list of all packages.
 
-```{r echo=FALSE}
+```{r include=FALSE}
 # Run this at the end
 sessioninfo::package_info(pkgs = NULL, include_base = FALSE)
 ```
