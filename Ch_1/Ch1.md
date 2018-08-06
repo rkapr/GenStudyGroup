@@ -1385,6 +1385,10 @@ D) None. We should use CLT instead.
 ```
 
 ```r
+# For B = 10K problem 2 gives 0.0579.
+```
+
+```r
 Ns <- c(3, 5, 10, 20, 50, 100)
 
 my_plot <- function(N, B = 100){
@@ -1425,6 +1429,36 @@ C) The approximations are spot on for all sample sizes.
 D) None. We should use CLT instead.
 
 
+```r
+Ns <- c(3, 5, 10, 20, 50, 100)
+
+my_plot_diff <- function(N, B = 100){
+  ps = seq(1/(B+1), 1-1/(B+1),len=B)
+  th_quantile <- qt(ps,df=2*N-2)
+
+  set.seed(1)
+  sim_quantile <- replicate(B,{
+    cases <- rnorm(N)
+    controls <- rnorm(N)
+    t.test(cases,controls,var.equal = TRUE)$statistic
+  })
+  qqplot(sim_quantile, th_quantile,  xlab="Data", ylab="t quantiles",
+       main=paste("t-prob plot, N=",N))
+  #abline(0,1)
+  qqline(sim_quantile, datax=TRUE, distribution=function(p){qt(p, df=2*N-2)})
+}
+
+par(mfrow=c(3,2))
+invisible(
+  sapply(Ns, function(N) my_plot_diff(N))
+  )
+```
+
+![](Ch1_files/figure-html/unnamed-chunk-90-1.png)<!-- -->
+
+```
+## [1] "C. The approximations are spot on for all sample sizes."
+```
 
 #### Problem 5
 
@@ -1457,7 +1491,7 @@ par(mfrow=c(1,1))
 my_plot_binom(N=15)
 ```
 
-![](Ch1_files/figure-html/unnamed-chunk-92-1.png)<!-- -->
+![](Ch1_files/figure-html/unnamed-chunk-93-1.png)<!-- -->
 
 #### Problem 6
 
@@ -1467,7 +1501,7 @@ Is the following statement true or false? If instead of generating the sample wi
 my_plot_binom(N=500)
 ```
 
-![](Ch1_files/figure-html/unnamed-chunk-93-1.png)<!-- -->
+![](Ch1_files/figure-html/unnamed-chunk-94-1.png)<!-- -->
 
 
 ```
@@ -1507,23 +1541,23 @@ my_plot_median <- function(N, B = 100,t_plot = TRUE){
 }
 
 par(mfrow=c(6,2))
-Ns = c(5,10,30,50,100,300)
+Ns = c(5,10,30,50,100,500)
 invisible(
   sapply(Ns, function(N) my_plot_median(N))
   )
 ```
 
-![](Ch1_files/figure-html/unnamed-chunk-95-1.png)<!-- -->
+![](Ch1_files/figure-html/unnamed-chunk-96-1.png)<!-- -->
 ```{}
 A. The variance seems greater than 1/sqrt(N).
 B. Sample median seems approximately normal.
-C. t-distribution is not a better fit than normal for small or large samples.
+C. t-distribution seems a better fit than normal for small samples. For large samples neither t nor normal seems a good fit. Notice the fat tails in lower left for N=100 and upper left for N=500.
 D. The distribution seems to be normal with mean 0 and variance greater than 1/sqrt(N).
 
 ```
 
 ```
-## [1] "D. [Also, theoretically (http://davidmlane.com/hyperstat/sampling_dist.html0] the variance of sample median should be 1.253 times 1/sqrt(N)]."
+## [1] "D. [Also, theoretically (http://davidmlane.com/hyperstat/sampling_dist.html0) the variance of sample median should be 1.253 times 1/sqrt(N)]."
 ```
 
 ### Permutation tests exercises
