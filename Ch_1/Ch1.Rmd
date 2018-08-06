@@ -979,6 +979,43 @@ B) The sample median is not approximately normal.
 C) The sample median is t-distributed for small samples and normally distributed for large ones.
 D) The sample median is approximately normal with mean 0 and SD larger than $1 / \sqrt{N}$.
 
+```{r fig.height=18, fig.width=6}
+my_plot_median <- function(N, B = 100,t_plot = TRUE){
+  ps = seq(1/(B+1), 1-1/(B+1),len=B)
+  th_quantile <- qt(ps,df=N-1)
+
+  set.seed(1)
+  sim_quantile <- replicate(B,{
+    samp <- rnorm(N)
+    sqrt(N)*median(samp)/sd(samp)
+  })
+
+  if(t_plot == TRUE){
+    qqplot(sim_quantile, th_quantile,  xlab="Data", ylab="t quantiles",
+         main=paste("t-prob plot, N=",N))
+    qqline(sim_quantile, datax=TRUE, distribution=function(p){qt(p, df=N-1)})
+  }
+  qqnorm(sim_quantile)
+  qqline(sim_quantile)
+}
+
+par(mfrow=c(6,2))
+Ns = c(5,10,30,50,100,300)
+invisible(
+  sapply(Ns, function(N) my_plot_median(N))
+  )
+```
+```{}
+A. The variance seems greater than 1/sqrt(N).
+B. Sample median seems approximately normal.
+C. t-distribution is not a better fit than normal for small or large samples.
+D. The distribution seems to be normal with mean 0 and variance greater than 1/sqrt(N).
+
+```
+```{r echo=FALSE}
+print("D. [Also, theoretically (http://davidmlane.com/hyperstat/sampling_dist.html0] the variance of sample median should be 1.253 times 1/sqrt(N)].")
+```
+
 ### Permutation tests exercises
 
 #### Basic Intallation and setup
