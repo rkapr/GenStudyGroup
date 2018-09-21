@@ -1,2 +1,2 @@
 # GenStudyGroup
-Files from genomics study group
+Files from online genomics study group.
